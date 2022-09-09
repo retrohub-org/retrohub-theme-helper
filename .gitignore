@@ -16,3 +16,6 @@ mono_crash.*.json
 
 # Addon specific files
 config.json
+
+# Blender temp files
+*.blend[0-9]

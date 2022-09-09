@@ -18,6 +18,8 @@ var _joypad_echo_event : InputEvent
 var _joypad_echo_timer := Timer.new()
 var _joypad_echo_interval_timer := Timer.new()
 
+var _helper_config : Dictionary
+
 var is_echo : bool
 
 var curr_game_data : RetroHubGameData
@@ -53,6 +55,7 @@ func _enter_tree():
 
 func _ready():
 	emit_signal("app_initializing", true)
+	_load_helper_config()
 	load_titles()
 
 func _on_joypad_echo_timer_timeout():
@@ -87,28 +90,27 @@ func _on_app_received_focus():
 func _on_app_lost_focus():
 	emit_signal("app_lost_focus")
 
-func load_titles():
-	yield(get_tree(), "idle_frame")
-	# Fetch config to figure out what to do
+func _load_helper_config():
 	var path := "res://addons/retrohub_theme_helper/config.json"
 	var file := File.new()
 	if not file.open(path, File.READ):
 		var result := JSON.parse(file.get_as_text())
 		file.close()
 		if not result.error:
-			process_json_config(result.result)
+			_helper_config = result.result
 
-func process_json_config(data: Dictionary):
-	if data.has("games_mode"):
-		match data["games_mode"]:
+func load_titles():
+	yield(get_tree(), "idle_frame")
+	if _helper_config.has("games_mode"):
+		match _helper_config["games_mode"]:
 			"random":
-				load_random_titles(data)
+				load_random_titles()
 			"local":
-				load_local_titles(data)
+				load_local_titles()
 
-func load_random_titles(data: Dictionary):
+func load_random_titles():
 	randomize()
-	var num_games : int = data["random_num"] if data.has("random_num") else 1
+	var num_games : int = _helper_config["random_num"] if _helper_config.has("random_num") else 1
 	var systems = JSONUtils.load_json_file("res://addons/retrohub_theme_helper/data/systems.json")["systems_list"]
 
 	emit_signal("system_receive_start")
@@ -130,7 +132,7 @@ func load_random_titles(data: Dictionary):
 func gen_random_game(system_name):
 	var game_data := RetroHubGameData.new()
 	game_data.has_metadata = true
-	game_data.has_media = false # TODO: Implement random media
+	game_data.has_media = true
 	game_data.system_name = system_name
 	game_data.name = GameRandomData.random_title()
 	game_data.path = game_data.name.to_lower() + GameRandomData.random_extension()
@@ -153,7 +155,7 @@ func gen_random_game(system_name):
 	
 	return game_data
 
-func load_local_titles(data: Dictionary):
+func load_local_titles():
 	RetroHubConfig.load_game_data_files()
 	emit_signal("system_receive_start")
 	for system in RetroHubConfig.systems.values():

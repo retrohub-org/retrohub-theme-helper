@@ -33,6 +33,7 @@ func add_singletons():
 	add_autoload_singleton("FileUtils", "res://addons/retrohub_theme_helper/utils/FileUtils.gd")
 	add_autoload_singleton("RetroHubConfig", "res://addons/retrohub_theme_helper/Config.gd")
 	add_autoload_singleton("RetroHubUI", "res://addons/retrohub_theme_helper/UI.gd")
+	add_autoload_singleton("RetroHubMedia", "res://addons/retrohub_theme_helper/Media.gd")
 	add_autoload_singleton("RetroHub", "res://addons/retrohub_theme_helper/RetroHub.gd")
 
 func add_dock():
@@ -63,6 +64,7 @@ func load_json(path: String):
 
 func remove_singletons():
 	remove_autoload_singleton("RetroHub")
+	remove_autoload_singleton("RetroHubMedia")
 	remove_autoload_singleton("RetroHubUI")
 	remove_autoload_singleton("RetroHubConfig")
 	remove_autoload_singleton("FileUtils")

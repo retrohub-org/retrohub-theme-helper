@@ -58,8 +58,9 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 			var game := RetroHubGameData.new()
 			game.system_name = system_name
 			game.has_metadata = true
+			game.path = file_name
 			if not fetch_game_data(full_path, game):
-				game.name = file_name
+				game.name = game.path
 				game.has_metadata = false
 				print("Metadata file corrupt!")
 			games.push_back(game)
