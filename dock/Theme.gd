@@ -1,6 +1,7 @@
 tool
 extends Control
 
+onready var n_id := $"%ID"
 onready var n_name := $"%Name"
 onready var n_description := $"%Description"
 onready var n_icon_preview := $"%IconPreview"
@@ -32,6 +33,8 @@ func _ready():
 
 func load_settings(_settings: Dictionary):
 	settings = _settings
+	if settings.has("id"):
+		n_id.text = settings["id"]
 	if settings.has("name"):
 		n_name.text = settings["name"]
 	if settings.has("description"):
@@ -102,3 +105,7 @@ func _on_Version_text_changed(new_text):
 
 func _on_URL_text_changed(new_text):
 	settings["url"] = new_text
+
+
+func _on_ID_text_changed(new_text):
+	settings["id"] = new_text

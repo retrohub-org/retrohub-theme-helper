@@ -32,9 +32,29 @@ margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="HBoxContainer9" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
 margin_right = 1024.0
 margin_bottom = 24.0
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer9"]
+margin_right = 510.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "ID:"
+
+[node name="ID" type="LineEdit" parent="ScrollContainer/VBoxContainer/HBoxContainer9"]
+unique_name_in_owner = true
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 75, 0 )
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+margin_top = 28.0
+margin_right = 1024.0
+margin_bottom = 52.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
 margin_right = 510.0
@@ -52,9 +72,9 @@ rect_min_size = Vector2( 75, 0 )
 size_flags_horizontal = 3
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 28.0
+margin_top = 56.0
 margin_right = 1024.0
-margin_bottom = 178.0
+margin_bottom = 206.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer2"]
 margin_right = 510.0
@@ -73,9 +93,9 @@ size_flags_horizontal = 3
 wrap_enabled = true
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 182.0
+margin_top = 210.0
 margin_right = 1024.0
-margin_bottom = 246.0
+margin_bottom = 274.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer3"]
 margin_right = 510.0
@@ -132,9 +152,9 @@ text = "Load"
 icon = SubResource( 2 )
 
 [node name="HBoxContainer8" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 250.0
+margin_top = 278.0
 margin_right = 1024.0
-margin_bottom = 274.0
+margin_bottom = 302.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer8"]
 margin_right = 510.0
@@ -152,9 +172,9 @@ rect_min_size = Vector2( 75, 0 )
 size_flags_horizontal = 3
 
 [node name="HBoxContainer4" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 278.0
+margin_top = 306.0
 margin_right = 1024.0
-margin_bottom = 302.0
+margin_bottom = 330.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer4"]
 margin_right = 510.0
@@ -172,9 +192,9 @@ rect_min_size = Vector2( 75, 0 )
 size_flags_horizontal = 3
 
 [node name="HBoxContainer5" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 306.0
+margin_top = 334.0
 margin_right = 1024.0
-margin_bottom = 330.0
+margin_bottom = 358.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer5"]
 margin_right = 510.0
@@ -192,9 +212,9 @@ rect_min_size = Vector2( 75, 0 )
 size_flags_horizontal = 3
 
 [node name="HBoxContainer6" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 334.0
+margin_top = 362.0
 margin_right = 1024.0
-margin_bottom = 348.0
+margin_bottom = 376.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer6"]
 margin_right = 1024.0
@@ -204,9 +224,9 @@ size_flags_vertical = 0
 text = "Screenshots:"
 
 [node name="HBoxContainer7" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
-margin_top = 352.0
+margin_top = 380.0
 margin_right = 1024.0
-margin_bottom = 402.0
+margin_bottom = 430.0
 
 [node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer7"]
 margin_right = 510.0
@@ -238,6 +258,7 @@ margin_bottom = 50.0
 text = "Load"
 icon = SubResource( 2 )
 
+[connection signal="text_changed" from="ScrollContainer/VBoxContainer/HBoxContainer9/ID" to="." method="_on_ID_text_changed"]
 [connection signal="text_changed" from="ScrollContainer/VBoxContainer/HBoxContainer/Name" to="." method="_on_Name_text_changed"]
 [connection signal="text_changed" from="ScrollContainer/VBoxContainer/HBoxContainer2/Description" to="." method="_on_Description_text_changed"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/HBoxContainer3/HBoxContainer/IconLoad" to="." method="_on_IconLoad_pressed"]

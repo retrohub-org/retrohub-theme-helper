@@ -99,6 +99,9 @@ func _load_helper_config():
 		if not result.error:
 			_helper_config = result.result
 
+func is_main_app() -> bool:
+	return false
+
 func load_titles():
 	yield(get_tree(), "idle_frame")
 	if _helper_config.has("games_mode"):

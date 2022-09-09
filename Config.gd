@@ -3,6 +3,10 @@ extends Node
 
 signal config_ready(config_data)
 signal config_updated(key, old_value, new_value)
+
+signal theme_config_ready()
+signal theme_config_updated(key, old_value, new_value)
+
 signal system_data_updated(system_data)
 signal game_data_updated(game_data)
 signal game_media_data_updated(game_media_data)
@@ -10,6 +14,8 @@ signal game_media_data_updated(game_media_data)
 var games : Array
 var systems : Dictionary
 var _systems_raw : Dictionary
+
+var _theme_config : Dictionary
 
 var _dir := Directory.new()
 
@@ -98,6 +104,12 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	game.has_media = data["has_media"]
 
 	return true
+
+func get_theme_config(key, default_value):
+	return default_value
+
+func set_theme_config(key, value):
+	pass
 
 func localize_date(date_raw: String) -> String:
 	if date_raw == "null" or date_raw.empty():
