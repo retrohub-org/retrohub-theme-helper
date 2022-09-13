@@ -63,7 +63,6 @@ func _on_joypad_echo_timer_timeout():
 	_joypad_echo_interval_timer.wait_time = 0
 
 func _on_joypad_echo_interval_timer_timeout():
-	print("Event")
 	Input.parse_input_event(_joypad_echo_event)
 
 func _input(event):
@@ -114,10 +113,9 @@ func load_titles():
 func load_random_titles():
 	randomize()
 	var num_games : int = _helper_config["random_num"] if _helper_config.has("random_num") else 1
-	var systems = JSONUtils.load_json_file("res://addons/retrohub_theme_helper/data/systems.json")["systems_list"]
 
 	emit_signal("system_receive_start")
-	for system in systems:
+	for system in RetroHubConfig._systems_raw.values():
 		var system_data := RetroHubSystemData.new()
 		system_data.name = system["name"]
 		system_data.fullname = system["fullname"]
@@ -127,7 +125,7 @@ func load_random_titles():
 	emit_signal("system_receive_end")
 	
 	emit_signal("game_receive_start")
-	for system in systems:
+	for system in RetroHubConfig._systems_raw.values():
 		for i in range(num_games):
 			emit_signal("game_received", gen_random_game(system["name"]))
 	emit_signal("game_receive_end")
@@ -162,19 +160,13 @@ func load_local_titles():
 	RetroHubConfig.load_game_data_files()
 	emit_signal("system_receive_start")
 	for system in RetroHubConfig.systems.values():
-		print(system)
 		emit_signal("system_received", system)
 	emit_signal("system_receive_end")
 	
 	emit_signal("game_receive_start")
 	for game in RetroHubConfig.games:
-		print(game)
 		emit_signal("game_received", game)
 	emit_signal("game_receive_end")
-
-func request_game_media(game_data: RetroHubGameData) -> RetroHubGameMediaData:
-	print("Data requested")
-	return RetroHubGameMediaData.new()
 
 func set_curr_game_data(game_data: RetroHubGameData) -> void:
 	curr_game_data = game_data
@@ -187,7 +179,6 @@ func launch_game() -> void:
 	print("Launching game ", curr_game_data.name)
 
 func is_input_echo():
-	print("Called, ", is_echo)
 	return is_echo
 
 func stop_game():

@@ -22,6 +22,12 @@ var _dir := Directory.new()
 func _ready():
 	if not Engine.editor_hint:
 		_systems_raw = JSONUtils.map_array_by_key(JSONUtils.load_json_file(get_systems_file())["systems_list"], "name")
+		expand_systems()
+
+func expand_systems():
+	for key in _systems_raw:
+		if _systems_raw[key].has("extends"):
+			_systems_raw[key].merge(_systems_raw[_systems_raw[key]["extends"]])
 
 func load_game_data_files():
 	games.clear()
