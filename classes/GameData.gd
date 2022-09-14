@@ -42,8 +42,9 @@ var genres : Array
 ## "{min_players}-{max_players}", even if in singleplayer (1-1)
 var num_players : String
 
-## Age rating, already pre-formatted to user's region
-var age_rating: ImageTexture
+## Age rating in a "raw" format, with ratings for all systems available.
+## To present the appropriate rating label, use RegionUtils.localize_age_rating(...)
+var age_rating: String
 
 ## Whether this game has been marked as favorite by the user
 var favorite : bool

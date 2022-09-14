@@ -27,24 +27,6 @@ var curr_game_data : RetroHubGameData
 onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
 
 func _enter_tree():
-	# Actions
-	var mappings = {
-		"rh_up": [KEY_W, KEY_UP],
-		"rh_down": [KEY_S, KEY_DOWN],
-		"rh_left": [KEY_A, KEY_LEFT],
-		"rh_right": [KEY_D, KEY_RIGHT],
-		"rh_accept": [KEY_ENTER],
-		"rh_back": [KEY_BACKSPACE]
-	}
-	
-	for mapping in mappings:
-		var scan_codes : Array = mappings[mapping]
-		InputMap.add_action(mapping)
-		for scan_code in scan_codes:
-			var ev = InputEventKey.new()
-			ev.scancode = scan_code
-			InputMap.action_add_event(mapping, ev)
-	
 	_joypad_echo_timer.wait_time = 1.0
 	_joypad_echo_interval_timer.wait_time = 0.1
 	_joypad_echo_timer.one_shot = true
@@ -120,6 +102,7 @@ func load_random_titles():
 		system_data.name = system["name"]
 		system_data.fullname = system["fullname"]
 		system_data.platform = system["platform"]
+		system_data.category = RetroHubConfig.convert_system_category(system["category"])
 		system_data.num_games = num_games
 		emit_signal("system_received", system_data)
 	emit_signal("system_receive_end")

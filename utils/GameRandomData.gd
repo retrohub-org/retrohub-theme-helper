@@ -202,5 +202,5 @@ func random_date(with_detail: bool) -> String:
 		return "%d/%d/%d" % [day, month, year]
 	#return "%4d%02d%02dT%02d%02d%02d" % [year, month, day, hour, minute, second]
 
-func random_age_rating() -> ImageTexture:
-	return ImageTexture.new()
+func random_age_rating() -> String:
+	return "%d/%d/%d" % [randi() % 6,randi() % 6,randi() % 6]
