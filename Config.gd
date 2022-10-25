@@ -68,7 +68,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 				systems[system_name].num_games += 1
 
 			var game := RetroHubGameData.new()
-			game.system_name = system_name
+			game.system = systems[system_name]
 			game.has_metadata = true
 			game.path = file_name
 			if not fetch_game_data(full_path, game):

@@ -114,7 +114,7 @@ func gen_random_media_data() -> RetroHubGameMediaData:
 func load_media_data(game_data: RetroHubGameData) -> RetroHubGameMediaData:
 	var game_media_data := RetroHubGameMediaData.new()
 
-	var media_path = RetroHubConfig.get_gamemedia_dir() + "/" + game_data.system_name
+	var media_path = RetroHubConfig.get_gamemedia_dir() + "/" + game_data.system.name
 	var game_path = game_data.path.get_file().get_basename()
 
 	var image := Image.new()

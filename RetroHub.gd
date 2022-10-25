@@ -97,6 +97,7 @@ func load_random_titles():
 	var num_games : int = _helper_config["random_num"] if _helper_config.has("random_num") else 1
 
 	emit_signal("system_receive_start")
+	system_datas := {}
 	for system in RetroHubConfig._systems_raw.values():
 		var system_data := RetroHubSystemData.new()
 		system_data.name = system["name"]
@@ -104,20 +105,21 @@ func load_random_titles():
 		system_data.platform = system["platform"]
 		system_data.category = RetroHubConfig.convert_system_category(system["category"])
 		system_data.num_games = num_games
+		system_datas[system_data.name] = system_data
 		emit_signal("system_received", system_data)
 	emit_signal("system_receive_end")
 	
 	emit_signal("game_receive_start")
 	for system in RetroHubConfig._systems_raw.values():
 		for i in range(num_games):
-			emit_signal("game_received", gen_random_game(system["name"]))
+			emit_signal("game_received", gen_random_game(system_datas[system["name"]]))
 	emit_signal("game_receive_end")
 
-func gen_random_game(system_name):
+func gen_random_game(system):
 	var game_data := RetroHubGameData.new()
 	game_data.has_metadata = true
 	game_data.has_media = true
-	game_data.system_name = system_name
+	game_data.system = system
 	game_data.name = GameRandomData.random_title()
 	game_data.path = game_data.name.to_lower() + GameRandomData.random_extension()
 	game_data.description = GameRandomData.random_description()
