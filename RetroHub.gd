@@ -97,7 +97,7 @@ func load_random_titles():
 	var num_games : int = _helper_config["random_num"] if _helper_config.has("random_num") else 1
 
 	emit_signal("system_receive_start")
-	system_datas := {}
+	var system_datas := {}
 	for system in RetroHubConfig._systems_raw.values():
 		var system_data := RetroHubSystemData.new()
 		system_data.name = system["name"]
