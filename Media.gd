@@ -1,6 +1,6 @@
 extends Node
 
-signal media_loaded(game_data, media_data, types)
+signal media_loaded(media_data, game_data, types)
 
 enum Type {
 	LOGO = 1 << 0,
@@ -16,6 +16,57 @@ enum Type {
 }
 
 var _media_cache := {}
+
+var _thread : Thread
+var _semaphore : Semaphore
+var _processing_mutex := Mutex.new()
+var _queue_mutex := Mutex.new()
+var _queue := []
+
+func _start_thread():
+	_thread = Thread.new()
+	_semaphore = Semaphore.new()
+
+	_thread.start(self, "t_process_media_requests")
+
+func _stop_thread():
+	_queue_mutex.lock()
+	_queue.clear()
+	_semaphore.post()
+	_queue_mutex.unlock()
+
+	_thread.wait_to_finish()
+
+
+func t_process_media_requests():
+	while true:
+		_processing_mutex.lock()
+		# Wait for incoming requests
+		_semaphore.wait()
+
+		# Get a request type
+		_queue_mutex.lock()
+		# If queue is empty, app is signaling thread to finish
+		if _queue.empty():
+			_processing_mutex.unlock()
+			_queue_mutex.unlock()
+			return
+
+		var req : Array = _queue.pop_front()
+		var game_data : RetroHubGameData = req[0]
+		var types : int = req[1]
+		_queue_mutex.unlock()
+		_processing_mutex.unlock()
+
+		var media_data := retrieve_media_data(game_data, types)
+		emit_signal("media_loaded", media_data, game_data, types)
+
+
+func _enter_tree():
+	_start_thread()
+
+func _exit_tree():
+	_stop_thread()
 
 var game_images := [
 	"4_3.png", "16_9.png"
@@ -87,6 +138,33 @@ func retrieve_media_data(game_data: RetroHubGameData, types: int = Type.ALL) -> 
 				return gen_random_media_data(game_data, types)
 	else:
 		return gen_random_media_data(game_data, types)
+
+func retrieve_media_data_async(game_data: RetroHubGameData, types: int = Type.ALL, priority: bool = false):
+	if not game_data.has_media:
+		print("Error: game %s has no media" % game_data.name)
+		return
+
+	_queue_mutex.lock()
+	var req := [game_data, types]
+	if priority:
+		_queue.push_front(req)
+	else:
+		_queue.push_back(req)
+	_semaphore.post()
+	_queue_mutex.unlock()
+
+func cancel_media_data_async(game_data: RetroHubGameData) -> void:
+	if _queue.empty():
+		return
+	_processing_mutex.lock()
+	_queue_mutex.lock()
+	for req in _queue:
+		if req[0] == game_data:
+			_queue.erase(req)
+			_semaphore.wait()
+			break
+	_queue_mutex.unlock()
+	_processing_mutex.unlock()
 
 func gen_random_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMediaData:
 	if not _media_cache.has(game_data):
