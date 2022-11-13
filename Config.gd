@@ -100,7 +100,7 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	game.name = data["name"]
 	game.description = data["description"]
 	game.rating = data["rating"]
-	game.release_date = localize_date(data["release_date"] as String)
+	game.release_date = data["release_date"]
 	game.developer = data["developer"]
 	game.publisher = data["publisher"]
 	game.genres = data["genres"]
@@ -108,7 +108,7 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	game.age_rating = data["age_rating"]
 	game.favorite = data["favorite"]
 	game.play_count = data["play_count"]
-	game.last_played = localize_date(data["last_played"] as String)
+	game.last_played = data["last_played"]
 	game.has_media = data["has_media"]
 
 	return true
@@ -118,18 +118,6 @@ func get_theme_config(key, default_value):
 
 func set_theme_config(key, value):
 	pass
-
-func localize_date(date_raw: String) -> String:
-	if date_raw == "null" or date_raw.empty():
-		return date_raw
-	var year = date_raw.substr(0, 4)
-	var month = date_raw.substr(4, 2)
-	var day = date_raw.substr(6, 2)
-	var hour = date_raw.substr(9, 2)
-	var minute = date_raw.substr(11, 2)
-	var second = date_raw.substr(13, 2)
-	var format_arr : Array
-	return "%s/%s/%s %s:%s:%s" % [month, day, year, hour, minute, second]
 
 func get_config_dir() -> String:
 	match FileUtils.get_os_id():

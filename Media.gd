@@ -105,7 +105,7 @@ func gen_random_media_data() -> RetroHubGameMediaData:
 		#var video_stream := VideoStreamWebm.new()
 		video_stream.set_file(path)
 		game_media_data.video = video_stream
-	
+
 	# Manual
 	## FIXME: Very likely we won't be able to support PDF reading.
 

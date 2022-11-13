@@ -197,10 +197,9 @@ func random_date(with_detail: bool) -> String:
 		day = int(min(day, 30))
 	
 	if with_detail:
-		return "%d:%d:%d %d/%d/%d" % [hour, minute, second, day, month, year]
+		return "%4d%02d%02dT%02d%02d%02d" % [year, month, day, hour, minute, second]
 	else:
-		return "%d/%d/%d" % [day, month, year]
-	#return "%4d%02d%02dT%02d%02d%02d" % [year, month, day, hour, minute, second]
+		return "%4d%02d%02dT000000" % [year, month, day]
 
 func random_age_rating() -> String:
 	return "%d/%d/%d" % [randi() % 6,randi() % 6,randi() % 6]
