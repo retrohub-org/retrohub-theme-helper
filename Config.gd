@@ -114,10 +114,12 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	return true
 
 func get_theme_config(key, default_value):
-	return default_value
+	if not _theme_config.has(key):
+		_theme_config[key] = default_value
+	return _theme_config[key]
 
 func set_theme_config(key, value):
-	pass
+	_theme_config[key] = value
 
 func get_config_dir() -> String:
 	match FileUtils.get_os_id():
