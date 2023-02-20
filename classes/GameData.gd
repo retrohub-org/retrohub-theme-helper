@@ -1,6 +1,35 @@
 extends Resource
 class_name RetroHubGameData
 
+# Sorter function
+static func sort(a: RetroHubGameData, b: RetroHubGameData):
+	return a.name.naturalnocasecmp_to(b.name) == -1
+
+func duplicate(_subresources: bool = false) -> Resource:
+	var other = .duplicate(_subresources)
+	other.copy_from(self)
+
+	return other
+
+func copy_from(other: RetroHubGameData) -> void:
+	has_metadata = other.has_metadata
+	has_media = other.has_media
+	system = other.system
+	system_path = other.system_path
+	name = other.name
+	path = other.path
+	description = other.description
+	rating = other.rating
+	release_date = other.release_date
+	developer = other.developer
+	publisher = other.publisher
+	genres = other.genres.duplicate()
+	num_players = other.num_players
+	age_rating = other.age_rating
+	favorite = other.favorite
+	play_count = other.play_count
+	last_played = other.last_played
+
 ## Whether this game already has metadata; if it doesn't, you should
 ## present a much simpler view of it
 var has_metadata : bool
@@ -11,6 +40,9 @@ var has_media : bool
 
 ## From what system is this game from
 var system : RetroHubSystemData
+
+## From what "loaded" system path this game is from
+var system_path : String
 
 ## Name; will default to `path` if no metadata is present yet
 var name : String

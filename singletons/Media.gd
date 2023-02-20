@@ -15,6 +15,18 @@ enum Type {
 	ALL = (1 << 9) - 1
 }
 
+var game_images := [
+	"4_3.png", "16_9.png"
+]
+
+var box_images := [
+	"rectangle.png", "square.png"
+]
+
+var support_images := [
+	"rectangle_vertical.png", "rectangle_horizontal.png", "disc.png"
+]
+
 var _media_cache := {}
 
 var _thread : Thread
@@ -23,11 +35,18 @@ var _processing_mutex := Mutex.new()
 var _queue_mutex := Mutex.new()
 var _queue := []
 
-func _start_thread():
-	_thread = Thread.new()
-	_semaphore = Semaphore.new()
+func _enter_tree():
+	_start_thread()
 
-	_thread.start(self, "t_process_media_requests")
+func _exit_tree():
+	_stop_thread()
+
+func _start_thread():
+	if not _thread:
+		_thread = Thread.new()
+		_semaphore = Semaphore.new()
+
+		_thread.start(self, "t_process_media_requests")
 
 func _stop_thread():
 	_queue_mutex.lock()
@@ -36,6 +55,7 @@ func _stop_thread():
 	_queue_mutex.unlock()
 
 	_thread.wait_to_finish()
+	_thread = null
 
 
 func t_process_media_requests():
@@ -61,24 +81,8 @@ func t_process_media_requests():
 		var media_data := retrieve_media_data(game_data, types)
 		emit_signal("media_loaded", media_data, game_data, types)
 
-
-func _enter_tree():
-	_start_thread()
-
-func _exit_tree():
-	_stop_thread()
-
-var game_images := [
-	"4_3.png", "16_9.png"
-]
-
-var box_images := [
-	"rectangle.png", "square.png"
-]
-
-var support_images := [
-	"rectangle_vertical.png", "rectangle_horizontal.png", "disc.png"
-]
+func _clear_media_cache():
+	_media_cache.clear()
 
 func convert_type_bitmask_to_list(bitmask: int) -> Array:
 	var arr := []

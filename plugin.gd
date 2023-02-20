@@ -32,10 +32,10 @@ func add_singletons():
 	add_autoload_singleton("JSONUtils", "res://addons/retrohub_theme_helper/utils/JSONUtils.gd")
 	add_autoload_singleton("FileUtils", "res://addons/retrohub_theme_helper/utils/FileUtils.gd")
 	add_autoload_singleton("RegionUtils", "res://addons/retrohub_theme_helper/utils/RegionUtils.gd")
-	add_autoload_singleton("RetroHubConfig", "res://addons/retrohub_theme_helper/Config.gd")
-	add_autoload_singleton("RetroHubUI", "res://addons/retrohub_theme_helper/UI.gd")
-	add_autoload_singleton("RetroHub", "res://addons/retrohub_theme_helper/RetroHub.gd")
-	add_autoload_singleton("RetroHubMedia", "res://addons/retrohub_theme_helper/Media.gd")
+	add_autoload_singleton("RetroHubConfig", "res://addons/retrohub_theme_helper/singletons/Config.gd")
+	add_autoload_singleton("RetroHubUI", "res://addons/retrohub_theme_helper/singletons/UI.gd")
+	add_autoload_singleton("RetroHub", "res://addons/retrohub_theme_helper/singletons/RetroHub.gd")
+	add_autoload_singleton("RetroHubMedia", "res://addons/retrohub_theme_helper/singletons/Media.gd")
 
 func add_dock():
 	dock = preload("res://addons/retrohub_theme_helper/dock/Dock.tscn").instance()
