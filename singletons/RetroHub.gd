@@ -14,15 +14,24 @@ signal game_receive_start()
 signal game_received(game_data)
 signal game_receive_end()
 
+signal game_media_received(game_data, game_media_data)
+
+var curr_game_data : RetroHubGameData
+
 var _joypad_echo_event : InputEvent
 var _joypad_echo_timer := Timer.new()
 var _joypad_echo_interval_timer := Timer.new()
 
 var _helper_config : Dictionary
 
-var is_echo : bool
+var _is_echo : bool
 
-var curr_game_data : RetroHubGameData
+const version_major := 0
+const version_minor := 0
+const version_patch := 6
+const version_extra := "-alpha"
+const version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
+
 
 onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
 
@@ -48,7 +57,7 @@ func _on_joypad_echo_interval_timer_timeout():
 	Input.parse_input_event(_joypad_echo_event)
 
 func _input(event):
-	is_echo = event.is_echo()
+	_is_echo = event.is_echo()
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		if Input.is_action_just_released("ui_left") or Input.is_action_just_released("ui_up") \
 			or Input.is_action_just_released("ui_right") or Input.is_action_just_released("ui_down"):
@@ -66,7 +75,7 @@ func _on_app_closing():
 	emit_signal("app_closing")
 
 func _on_app_received_focus():
-		emit_signal("app_received_focus")
+	emit_signal("app_received_focus")
 
 func _on_app_lost_focus():
 	emit_signal("app_lost_focus")
@@ -103,7 +112,7 @@ func load_random_titles():
 		system_data.name = system["name"]
 		system_data.fullname = system["fullname"]
 		system_data.platform = system["platform"]
-		system_data.category = RetroHubConfig.convert_system_category(system["category"])
+		system_data.category = RetroHubSystemData.category_to_idx(system["category"])
 		system_data.num_games = num_games
 		system_datas[system_data.name] = system_data
 		emit_signal("system_received", system_data)
@@ -143,15 +152,17 @@ func gen_random_game(system):
 
 func load_local_titles():
 	RetroHubConfig.load_game_data_files()
-	emit_signal("system_receive_start")
-	for system in RetroHubConfig.systems.values():
-		emit_signal("system_received", system)
-	emit_signal("system_receive_end")
-	
-	emit_signal("game_receive_start")
-	for game in RetroHubConfig.games:
-		emit_signal("game_received", game)
-	emit_signal("game_receive_end")
+	var systems : Dictionary = RetroHubConfig.systems
+	if not systems.empty():
+		emit_signal("system_receive_start")
+		for system in systems.values():
+			emit_signal("system_received", system)
+		emit_signal("system_receive_end")
+		
+		emit_signal("game_receive_start")
+		for game in RetroHubConfig.games:
+			emit_signal("game_received", game)
+		emit_signal("game_receive_end")
 
 func set_curr_game_data(game_data: RetroHubGameData) -> void:
 	curr_game_data = game_data
@@ -162,9 +173,6 @@ func launch_game() -> void:
 		return
 
 	print("Launching game ", curr_game_data.name)
-
-func is_input_echo():
-	return is_echo
 
 func stop_game():
 	print("Stopping game")

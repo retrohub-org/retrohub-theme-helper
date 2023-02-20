@@ -19,14 +19,61 @@ func localize_date(date_raw: String) -> String:
 			format_arr = [month, day, year, hour, minute, second]
 	return "%s/%s/%s %s:%s:%s" % format_arr
 
+func globalize_date_str(date_raw: String, source_format: String = ""):
+	if date_raw == "null" or date_raw.empty():
+		return date_raw
+	var date_split = date_raw.split(" ")
+	var year := 1970
+	var month := 1
+	var day := 1
+	var hour := 0
+	var minute := 0
+	var second := 0
+
+	match randi() % 3:
+		0:
+			day = int(date_split[0].get_slice("/", 0))
+			month = int(date_split[0].get_slice("/", 1))
+			year = int(date_split[0].get_slice("/", 2))
+		1:
+			day = int(date_split[0].get_slice("/", 2))
+			month = int(date_split[0].get_slice("/", 1))
+			year = int(date_split[0].get_slice("/", 0))
+		2, _:
+			day = int(date_split[0].get_slice("/", 1))
+			month = int(date_split[0].get_slice("/", 0))
+			year = int(date_split[0].get_slice("/", 2))
+	# TODO: Hour format
+	hour = int(date_split[1].get_slice(":", 0))
+	minute = int(date_split[1].get_slice(":", 1))
+	second = int(date_split[1].get_slice(":", 2))
+
+	return "%04d%02d%02dT%02d%02d%02d" % [year, month, day, hour, minute, second]
+
+func globalize_date_dict(date_dict: Dictionary, source_format: String = ''):
+	var year : int = date_dict["year"]
+	var month : int = date_dict["month"]
+	var day : int = date_dict["day"]
+	var hour : int = date_dict["hour"]
+	var minute : int = date_dict["minute"]
+	var second : int = date_dict["second"]
+
+	return "%04d%02d%02dT%02d%02d%02d" % [year, month, day, hour, minute, second]
+
 func localize_age_rating(age_rating_raw: String) -> Control:
-	var rating_idx := randi() % 3
+	var rating_idx : int
+	match randi() % 3:
+		0:
+			rating_idx = 1
+		1:
+			rating_idx = 2
+		2, _:
+			rating_idx = 0
 	var rating_node = preload("res://addons/retrohub_theme_helper/ui/AgeRatingTextureRect.tscn").instance()
 	rating_node.from_rating_str(age_rating_raw, rating_idx)
 	return rating_node
 
-func localize_console_name(console_name_raw: String) -> String:
-	return console_name_raw
-
-func localize_console_fullname(console_fullname_raw: String) -> String:
-	return console_fullname_raw
+func localize_system_name(system_name: String) -> String:
+	if RetroHubConfig.config.system_names.has(system_name):
+		return RetroHubConfig.config.system_names[system_name]
+	return system_name
