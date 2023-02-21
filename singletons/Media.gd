@@ -269,7 +269,7 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 		_media_cache[game_data] = RetroHubGameMediaData.new()
 	var game_media_data : RetroHubGameMediaData = _media_cache[game_data]
 
-	var media_path = RetroHubConfig.get_gamemedia_dir() + "/" + game_data.system.name
+	var media_path = RetroHubConfig.get_gamemedia_dir() + "/" + game_data.system_path
 	var game_path = game_data.path.get_file().get_basename()
 
 	var image := Image.new()
