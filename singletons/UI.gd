@@ -6,6 +6,19 @@ var color_error := Color("ff5d5d")
 var color_pending := Color("dddddd")
 var color_unavailable := Color("999999")
 
+enum Icons {
+	DOWNLOADING,
+	ERROR,
+	FAILURE,
+	IMAGE_DOWNLOADING,
+	LOAD,
+	LOADING,
+	SUCCESS,
+	VISIBILITY_HIDDEN,
+	VISIBILITY_VISIBLE,
+	WARNING
+}
+
 signal path_selected(file)
 
 func filesystem_filters(filters: Array = []):
@@ -25,3 +38,6 @@ func is_virtual_keyboard_visible() -> bool:
 
 func hide_virtual_keyboard() -> void:
 	pass
+
+func load_app_icon(icon: int) -> Texture:
+	return Texture.new()
