@@ -6,17 +6,15 @@ signal app_received_focus
 signal app_lost_focus
 signal app_returning(system_data, game_data)
 
-signal system_receive_start()
+signal system_receive_start
 signal system_received(system_data)
-signal system_receive_end()
+signal system_receive_end
 
-signal game_receive_start()
+signal game_receive_start
 signal game_received(game_data)
-signal game_receive_end()
+signal game_receive_end
 
-signal game_media_received(game_data, game_media_data)
-
-var curr_game_data : RetroHubGameData
+var curr_game_data : RetroHubGameData = null
 
 var _joypad_echo_event : InputEvent
 var _joypad_echo_timer := Timer.new()
@@ -28,7 +26,7 @@ var _is_echo : bool
 
 const version_major := 0
 const version_minor := 0
-const version_patch := 6
+const version_patch := 8
 const version_extra := "-alpha"
 const version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
 
