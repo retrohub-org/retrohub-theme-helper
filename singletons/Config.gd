@@ -4,12 +4,10 @@ extends Node
 signal config_ready(config_data)
 signal config_updated(key, old_value, new_value)
 
-signal theme_config_ready()
+signal theme_config_ready
 signal theme_config_updated(key, old_value, new_value)
 
-signal system_data_updated(system_data)
 signal game_data_updated(game_data)
-signal game_media_data_updated(game_media_data)
 
 var games : Array
 var systems : Dictionary
@@ -36,7 +34,7 @@ func load_game_data_files():
 	if _dir.open(get_gamelists_dir()) or _dir.list_dir_begin(true):
 		print("Error when opening game lists directory " + get_gamelists_dir())
 		return
-	var file_name = _dir.get_next()
+	var file_name := _dir.get_next()
 	while file_name != "":
 		if _dir.current_is_dir() and _systems_raw.has(file_name):
 			load_system_gamelists_files(get_gamelists_dir() + "/" + file_name, file_name)
@@ -48,9 +46,9 @@ func load_game_data_files():
 
 func load_system_gamelists_files(folder_path: String, system_name: String):
 	print("Loading games from directory " + folder_path)
-	var dir = Directory.new()
+	var dir := Directory.new()
 	if dir.open(folder_path) or dir.list_dir_begin(true):
-		print("Error when opening game directory " + folder_path)
+		push_error("Error when opening game directory " + folder_path)
 		return
 	var file_name = dir.get_next()
 	while file_name != "":
@@ -77,10 +75,10 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 			game.system_path = system_name
 			game.has_metadata = true
 			if not fetch_game_data(full_path, game):
-				game.name = game.path
+				push_error("Metadata file corrupt!")
+				game.name = file_name
 				game.age_rating = "0/0/0"
 				game.has_metadata = false
-				print("Metadata file corrupt!")
 			games.push_back(game)
 		file_name = dir.get_next()
 	dir.list_dir_end()
@@ -89,7 +87,7 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	var data : Dictionary = JSONUtils.load_json_file(path)
 	if data.empty():
 		return false
-	
+
 	game.name = data["name"]
 	game.description = data["description"]
 	game.rating = data["rating"]
@@ -106,22 +104,21 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 
 	return true
 
-func get_game_data_path_from_file(system_name: String, file_name: String):
+func get_game_data_path_from_file(system_name: String, file_name: String) -> String:
 	return get_gamelists_dir() + "/" + system_name + "/" + file_name.get_file().trim_suffix(file_name.get_extension()) + "json"
 
 func is_file_from_system(file_name: String, system_name: String) -> bool:
 	var extensions : Array = _systems_raw[system_name]["extension"]
-	var file_extension = ("." + file_name.get_extension()).to_lower()
+	var file_extension := ("." + file_name.get_extension()).to_lower()
 	for extension in extensions:
 		if extension.to_lower() == file_extension:
 			return true
-	
-	return false
 
+	return false
 
 func get_theme_config(key, default_value):
 	if not _theme_config.has(key):
-		_theme_config[key] = default_value
+		return default_value
 	return _theme_config[key]
 
 func set_theme_config(key, value):
@@ -140,13 +137,13 @@ func get_config_file() -> String:
 func get_systems_file() -> String:
 	return "res://addons/retrohub_theme_helper/data/systems.json"
 
-func get_themes_dir():
+func get_themes_dir() -> String:
 	return get_config_dir() + "/themes"
 
-func get_gamelists_dir():
+func get_gamelists_dir() -> String:
 	return get_config_dir() + "/gamelists"
 
-func get_gamemedia_dir():
+func get_gamemedia_dir() -> String:
 	return get_config_dir() + "/gamemedia"
 
 

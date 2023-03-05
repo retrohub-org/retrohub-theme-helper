@@ -69,7 +69,7 @@ func localize_age_rating(age_rating_raw: String) -> Control:
 			rating_idx = 2
 		2, _:
 			rating_idx = 0
-	var rating_node = preload("res://addons/retrohub_theme_helper/ui/AgeRatingTextureRect.tscn").instance()
+	var rating_node : Control = preload("res://addons/retrohub_theme_helper/ui/AgeRatingTextureRect.tscn").instance()
 	rating_node.from_rating_str(age_rating_raw, rating_idx)
 	return rating_node
 
