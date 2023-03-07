@@ -1,5 +1,7 @@
 extends Node
 
+var color_theme_accent := Color("ffbb89")
+
 var color_success := Color("41eb83")
 var color_warning := Color("ffd24a")
 var color_error := Color("ff5d5d")
