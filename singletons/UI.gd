@@ -24,6 +24,19 @@ enum Icons {
 	WARNING
 }
 
+enum ConfigTabs {
+	QUIT,
+	GAME,
+	SCRAPER,
+	THEME,
+	SETTINGS_GENERAL,
+	SETTINGS_INPUT,
+	SETTINGS_REGION,
+	SETTINGS_SYSTEMS,
+	SETTINGS_EMULATORS,
+	SETTINGS_ABOUT
+}
+
 signal path_selected(file)
 
 func filesystem_filters(filters: Array = []):
@@ -45,4 +58,10 @@ func is_virtual_keyboard_visible() -> bool:
 	return false
 
 func hide_virtual_keyboard() -> void:
+	pass
+
+func open_app_config(tab: int = -1):
+	pass
+
+func show_warning(text: String):
 	pass

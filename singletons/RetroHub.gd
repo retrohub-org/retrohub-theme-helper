@@ -26,7 +26,7 @@ var _is_echo : bool
 
 const version_major := 0
 const version_minor := 1
-const version_patch := 0
+const version_patch := 1
 const version_extra := "-beta"
 const version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
 
@@ -180,4 +180,7 @@ func stop_game():
 	load_titles()
 
 func request_theme_reload():
+	pass
+
+func kill_game_process():
 	pass
