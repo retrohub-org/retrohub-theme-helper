@@ -26,7 +26,7 @@ var _is_echo : bool
 
 const version_major := 0
 const version_minor := 1
-const version_patch := 1
+const version_patch := 2
 const version_extra := "-beta"
 const version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
 
@@ -46,6 +46,13 @@ func _ready():
 	emit_signal("app_initializing", true)
 	_load_helper_config()
 	load_titles()
+
+func _notification(what):
+	match what:
+		NOTIFICATION_WM_FOCUS_IN:
+			emit_signal("app_received_focus")
+		NOTIFICATION_WM_FOCUS_OUT:
+			emit_signal("app_lost_focus")
 
 func _on_joypad_echo_timer_timeout():
 	_joypad_echo_interval_timer.start()

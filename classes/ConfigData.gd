@@ -14,6 +14,7 @@ const KEY_DATE_FORMAT = "date_format"
 const KEY_SYSTEM_NAMES = "system_names"
 const KEY_SCRAPER_HASH_FILE_SIZE = "scraper_hash_file_size"
 const KEY_SCRAPER_SS_USE_CUSTOM_ACCOUNT = "scraper_ss_use_custom_account"
+const KEY_SCRAPER_SS_MAX_THREADS = "scraper_ss_max_threads"
 const KEY_CUSTOM_INPUT_REMAP = "custom_input_remap"
 const KEY_INPUT_KEY_MAP = "input_key_map"
 const KEY_INPUT_CONTROLLER_MAP = "input_controller_map"
@@ -23,8 +24,10 @@ const KEY_INPUT_CONTROLLER_ICON_TYPE = "input_controller_icon_type"
 const KEY_INPUT_CONTROLLER_ECHO_PRE_DELAY = "input_controller_echo_pre_delay"
 const KEY_INPUT_CONTROLLER_ECHO_DELAY = "input_controller_echo_delay"
 const KEY_VIRTUAL_KEYBOARD_LAYOUT = "virtual_keyboard_layout"
+const KEY_VIRTUAL_KEYBOARD_TYPE = "virtual_keyboard_type"
 const KEY_VIRTUAL_KEYBOARD_SHOW_ON_CONTROLLER = "virtual_keyboard_show_on_controller"
 const KEY_VIRTUAL_KEYBOARD_SHOW_ON_MOUSE = "virtual_keyboard_show_on_mouse"
+const KEY_ACCESSIBILITY_SCREEN_READER_ENABLED = "accessibility_screen_reader_enabled"
 
 static func default_system_names() -> Dictionary:
 	return {
@@ -87,3 +90,9 @@ static func default_input_controller_map() -> Dictionary:
 		"rh_left_trigger": [JOY_L2],
 		"rh_right_trigger": [JOY_R2]
 	}
+
+static func default_virtual_keyboard_type() -> String:
+	if FileUtils.is_steam_deck():
+		return "steam"
+	else:
+		return "builtin"
