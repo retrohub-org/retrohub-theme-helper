@@ -1,4 +1,4 @@
-extends Node
+extends Control
 
 var color_theme_accent := Color("ffbb89")
 
