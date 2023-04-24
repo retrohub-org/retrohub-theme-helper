@@ -1,6 +1,34 @@
 extends Resource
 class_name ConfigData
 
+var is_first_time : bool = true
+var games_dir : String = FileUtils.get_home_dir() + "/ROMS"
+var current_theme : String = "default"
+var lang : String = "en"
+var fullscreen : bool = true
+var vsync : bool = true
+var render_resolution : int = 100
+var region : String = "usa"
+var rating_system : String = "esrb"
+var date_format : String = "mm/dd/yyyy"
+var system_names : Dictionary = default_system_names()
+var scraper_hash_file_size : int = 64
+var scraper_ss_use_custom_account : bool = false
+var scraper_ss_max_threads : int = 6
+var custom_input_remap : String = ""
+var input_key_map : Dictionary = default_input_key_map()
+var input_controller_map : Dictionary = default_input_controller_map()
+var input_controller_main_axis : String = "left"
+var input_controller_secondary_axis : String = "right"
+var input_controller_icon_type : String = "auto"
+var input_controller_echo_pre_delay: float = 0.75
+var input_controller_echo_delay: float = 0.15
+var virtual_keyboard_layout : String = "qwerty"
+var virtual_keyboard_type : String = default_virtual_keyboard_type()
+var virtual_keyboard_show_on_controller : bool = true
+var virtual_keyboard_show_on_mouse : bool = false
+var accessibility_screen_reader_enabled : bool = true
+
 const KEY_IS_FIRST_TIME = "is_first_time"
 const KEY_GAMES_DIR = "games_dir"
 const KEY_CURRENT_THEME = "current_theme"

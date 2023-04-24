@@ -11,6 +11,8 @@ signal game_data_updated(game_data)
 
 var games : Array
 var systems : Dictionary
+var config : ConfigData = ConfigData.new()
+
 var _systems_raw : Dictionary
 
 var _theme_config : Dictionary
