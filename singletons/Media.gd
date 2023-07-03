@@ -47,7 +47,7 @@ func _start_thread():
 		_thread = Thread.new()
 		_semaphore = Semaphore.new()
 
-		_thread.start(self, "t_process_media_requests")
+		_thread.start(Callable(self, "t_process_media_requests"))
 
 func _stop_thread():
 	_queue_mutex.lock()
@@ -68,7 +68,7 @@ func t_process_media_requests():
 		# Get a request type
 		_queue_mutex.lock()
 		# If queue is empty, app is signaling thread to finish
-		if _queue.empty():
+		if _queue.is_empty():
 			_processing_mutex.unlock()
 			_queue_mutex.unlock()
 			return
@@ -160,7 +160,7 @@ func retrieve_media_data_async(game_data: RetroHubGameData, types: int = Type.AL
 	_queue_mutex.unlock()
 
 func cancel_media_data_async(game_data: RetroHubGameData) -> void:
-	if _queue.empty():
+	if _queue.is_empty():
 		return
 	_processing_mutex.lock()
 	_queue_mutex.lock()
@@ -180,87 +180,89 @@ func gen_random_media_data(game_data: RetroHubGameData, types: int) -> RetroHubG
 
 	var base_path = "res://addons/retrohub_theme_helper/assets/"
 	var image := Image.new()
-	var file := File.new()
 
 	# Logo
 	var path = base_path + "logo/logo.png"
-	if types & Type.LOGO and file.file_exists(path):
+	if types & Type.LOGO and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample logo image!")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.logo = image_texture
 
 	# Screenshot
 	path = base_path + "screenshot/" + game_images[randi() % game_images.size()]
-	if types & Type.SCREENSHOT and file.file_exists(path):
+	if types & Type.SCREENSHOT and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample screenshot image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.screenshot = image_texture
 
 	# Title screen
 	path = base_path + "title-screen/" + game_images[randi() % game_images.size()]
-	if types & Type.TITLE_SCREEN and file.file_exists(path):
+	if types & Type.TITLE_SCREEN and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample title screen image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.title_screen = image_texture
 
 	# Box render
 	var box_tex = box_images[randi() % box_images.size()]
 	path = base_path + "box-render/" + box_tex
-	if types & Type.BOX_RENDER and file.file_exists(path):
+	if types & Type.BOX_RENDER and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample box render image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.box_render = image_texture
 
 	# Box texture
 	path = base_path + "box-texture/" + box_tex
-	if types & Type.BOX_TEXTURE and file.file_exists(path):
+	if types & Type.BOX_TEXTURE and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample box texture image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.box_texture = image_texture
 
 	# Support render
 	var support_tex = support_images[randi() % support_images.size()]
 	path = base_path + "support-render/" + support_tex
-	if types & Type.SUPPORT_RENDER and file.file_exists(path):
+	if types & Type.SUPPORT_RENDER and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample support render image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.support_render = image_texture
 
 	# Support texture
 	path = base_path + "support-texture/" + support_tex
-	if types & Type.SUPPORT_TEXTURE and file.file_exists(path):
+	if types & Type.SUPPORT_TEXTURE and FileAccess.file_exists(path):
 		if image.load(path):
 			print("Error when loading sample support texture image")
 		else:
 			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image, 6)
+			image_texture.create_from_image(image) #,6
 			game_media_data.support_texture = image_texture
 
 	# Video
+	# FIXME: VideoStreamGDNative was removed from Godot, need to figure how to proceed from here
+	"""
 	path = base_path + "video/video.mp4"
-	if types & Type.VIDEO and file.file_exists(path):
+	if types & Type.VIDEO and FileAccess.file_exists(path):
 		var video_stream := VideoStreamGDNative.new()
 		#var video_stream := VideoStreamWebm.new()
 		video_stream.set_file(path)
 		game_media_data.video = video_stream
+	"""
 
 	# Manual
 	## FIXME: Very likely we won't be able to support PDF reading.
@@ -276,93 +278,95 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 	var game_path := game_data.path.get_file().get_basename()
 
 	var image := Image.new()
-	var file := File.new()
 	var path : String
 
 	# Logo
 	if not game_media_data.logo:
 		path = media_path + "/logo/" + game_path + ".png"
-		if types & Type.LOGO and file.file_exists(path):
+		if types & Type.LOGO and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading logo image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.logo = image_texture
 
 	# Screenshot
 	if not game_media_data.screenshot:
 		path = media_path + "/screenshot/" + game_path + ".png"
-		if types & Type.SCREENSHOT and file.file_exists(path):
+		if types & Type.SCREENSHOT and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading screenshot image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.screenshot = image_texture
 
 	# Title screen
 	if not game_media_data.title_screen:
 		path = media_path + "/title-screen/" + game_path + ".png"
-		if types & Type.TITLE_SCREEN and file.file_exists(path):
+		if types & Type.TITLE_SCREEN and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading title screen image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.title_screen = image_texture
 
 	# Box render
 	if not game_media_data.box_render:
 		path = media_path + "/box-render/" + game_path + ".png"
-		if types & Type.BOX_RENDER and file.file_exists(path):
+		if types & Type.BOX_RENDER and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading box render image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.box_render = image_texture
 
 	# Box texture
 	if not game_media_data.box_texture:
 		path = media_path + "/box-texture/" + game_path + ".png"
-		if types & Type.BOX_TEXTURE and file.file_exists(path):
+		if types & Type.BOX_TEXTURE and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading box texture image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.box_texture = image_texture
 
 	# Support render
 	if not game_media_data.support_render:
 		path = media_path + "/support-render/" + game_path + ".png"
-		if types & Type.SUPPORT_RENDER and file.file_exists(path):
+		if types & Type.SUPPORT_RENDER and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading support render image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.support_render = image_texture
 
 	# Support texture
 	if not game_media_data.support_texture:
 		path = media_path + "/support-texture/" + game_path + ".png"
-		if types & Type.SUPPORT_TEXTURE and file.file_exists(path):
+		if types & Type.SUPPORT_TEXTURE and FileAccess.file_exists(path):
 			if image.load(path):
 				push_error("Error when loading support texture image for game %s!" % game_data.name)
 			else:
 				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image, 6)
+				image_texture.create_from_image(image) #,6
 				game_media_data.support_texture = image_texture
 
 	# Video
+	# FIXME: VideoStreamGDNative was removed from Godot, need to figure how to proceed from here
+	"""
 	if not game_media_data.video:
 		path = media_path + "/video/" + game_path + ".mp4"
-		if types & Type.VIDEO and file.file_exists(path):
+		if types & Type.VIDEO and FileAccess.file_exists(path):
 			var video_stream := VideoStreamGDNative.new()
 			video_stream.set_file(path)
 			game_media_data.video = video_stream
+	"""
 
 	# Manual
 	## FIXME: Very likely we won't be able to support PDF reading.

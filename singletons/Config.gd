@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 signal config_ready(config_data)
@@ -17,10 +17,8 @@ var _systems_raw : Dictionary
 
 var _theme_config : Dictionary
 
-var _dir := Directory.new()
-
 func _ready():
-	if not Engine.editor_hint:
+	if not Engine.is_editor_hint():
 		load_systems()
 
 func load_systems():
@@ -33,23 +31,24 @@ func load_systems():
 func load_game_data_files():
 	games.clear()
 	systems.clear()
-	if _dir.open(get_gamelists_dir()) or _dir.list_dir_begin(true):
-		print("Error when opening game lists directory " + get_gamelists_dir())
+	var dir := DirAccess.open(config.games_dir)
+	if not dir or dir.list_dir_begin(): # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
+		push_error("Error when opening game directory " + config.games_dir)
 		return
-	var file_name := _dir.get_next()
+	var file_name := dir.get_next()
 	while file_name != "":
-		if _dir.current_is_dir() and _systems_raw.has(file_name):
+		if dir.current_is_dir() and _systems_raw.has(file_name):
 			load_system_gamelists_files(get_gamelists_dir() + "/" + file_name, file_name)
 		# We are not interested in files, only folders
-		file_name = _dir.get_next()
-	_dir.list_dir_end()
+		file_name = dir.get_next()
+	dir.list_dir_end()
 	# Finally order the games array
-	games.sort_custom(RetroHubGameData, "sort")
+	games.sort_custom(Callable(RetroHubGameData, "sort"))
 
 func load_system_gamelists_files(folder_path: String, system_name: String):
 	print("Loading games from directory " + folder_path)
-	var dir := Directory.new()
-	if dir.open(folder_path) or dir.list_dir_begin(true):
+	var dir := DirAccess.open(folder_path)
+	if not dir or dir.list_dir_begin() :# TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		push_error("Error when opening game directory " + folder_path)
 		return
 	var file_name = dir.get_next()
@@ -87,7 +86,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 
 func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	var data : Dictionary = JSONUtils.load_json_file(path)
-	if data.empty():
+	if data.is_empty():
 		return false
 
 	game.name = data["name"]

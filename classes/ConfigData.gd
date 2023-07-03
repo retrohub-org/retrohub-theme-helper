@@ -89,7 +89,7 @@ static func default_input_key_map() -> Dictionary:
 	return {
 		"rh_accept": [KEY_ENTER],
 		"rh_back": [KEY_BACKSPACE],
-		"rh_major_option": [KEY_CONTROL],
+		"rh_major_option": [KEY_CTRL],
 		"rh_minor_option": [KEY_ALT],
 		"rh_menu": [KEY_ESCAPE],
 		"rh_theme_menu": [KEY_SHIFT],
@@ -103,20 +103,18 @@ static func default_input_key_map() -> Dictionary:
 
 static func default_input_controller_map() -> Dictionary:
 	return {
-		"rh_accept": [JOY_XBOX_A],
-		"rh_back": [JOY_XBOX_B],
-		"rh_major_option": [JOY_XBOX_X],
-		"rh_minor_option": [JOY_XBOX_Y],
-		"rh_menu": [JOY_START],
-		"rh_theme_menu": [JOY_SELECT],
-		"rh_up": [JOY_DPAD_UP],
-		"rh_down": [JOY_DPAD_DOWN],
-		"rh_left": [JOY_DPAD_LEFT],
-		"rh_right": [JOY_DPAD_RIGHT],
-		"rh_left_shoulder": [JOY_L],
-		"rh_right_shoulder": [JOY_R],
-		"rh_left_trigger": [JOY_L2],
-		"rh_right_trigger": [JOY_R2]
+		"rh_accept": [JOY_BUTTON_A],
+		"rh_back": [JOY_BUTTON_B],
+		"rh_major_option": [JOY_BUTTON_X],
+		"rh_minor_option": [JOY_BUTTON_Y],
+		"rh_menu": [JOY_BUTTON_START],
+		"rh_theme_menu": [JOY_BUTTON_BACK],
+		"rh_up": [JOY_BUTTON_DPAD_UP],
+		"rh_down": [JOY_BUTTON_DPAD_DOWN],
+		"rh_left": [JOY_BUTTON_DPAD_LEFT],
+		"rh_right": [JOY_BUTTON_DPAD_RIGHT],
+		"rh_left_shoulder": [JOY_BUTTON_LEFT_SHOULDER],
+		"rh_right_shoulder": [JOY_BUTTON_RIGHT_SHOULDER]
 	}
 
 static func default_virtual_keyboard_type() -> String:
