@@ -31,9 +31,9 @@ func load_systems():
 func load_game_data_files():
 	games.clear()
 	systems.clear()
-	var dir := DirAccess.open(config.games_dir)
+	var dir := DirAccess.open(get_gamelists_dir())
 	if not dir or dir.list_dir_begin(): # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-		push_error("Error when opening game directory " + config.games_dir)
+		push_error("Error when opening game directory " + get_gamelists_dir())
 		return
 	var file_name := dir.get_next()
 	while file_name != "":
