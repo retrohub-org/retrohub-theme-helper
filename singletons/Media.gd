@@ -179,78 +179,84 @@ func gen_random_media_data(game_data: RetroHubGameData, types: int) -> RetroHubG
 	var game_media_data : RetroHubGameMediaData = _media_cache[game_data]
 
 	var base_path = "res://addons/retrohub_theme_helper/assets/"
-	var image := Image.new()
 
 	# Logo
 	var path = base_path + "logo/logo.png"
 	if types & Type.LOGO and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample logo image!")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.logo = image_texture
 
 	# Screenshot
 	path = base_path + "screenshot/" + game_images[randi() % game_images.size()]
 	if types & Type.SCREENSHOT and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample screenshot image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.screenshot = image_texture
 
 	# Title screen
 	path = base_path + "title-screen/" + game_images[randi() % game_images.size()]
 	if types & Type.TITLE_SCREEN and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample title screen image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.title_screen = image_texture
 
 	# Box render
 	var box_tex = box_images[randi() % box_images.size()]
 	path = base_path + "box-render/" + box_tex
 	if types & Type.BOX_RENDER and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample box render image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.box_render = image_texture
 
 	# Box texture
 	path = base_path + "box-texture/" + box_tex
 	if types & Type.BOX_TEXTURE and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample box texture image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.box_texture = image_texture
 
 	# Support render
 	var support_tex = support_images[randi() % support_images.size()]
 	path = base_path + "support-render/" + support_tex
 	if types & Type.SUPPORT_RENDER and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample support render image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.support_render = image_texture
 
 	# Support texture
 	path = base_path + "support-texture/" + support_tex
 	if types & Type.SUPPORT_TEXTURE and FileAccess.file_exists(path):
-		if image.load(path):
+		var image = Image.load_from_file(path)
+		image.generate_mipmaps()
+		var image_texture = ImageTexture.create_from_image(image)
+		if not image_texture:
 			print("Error when loading sample support texture image")
 		else:
-			var image_texture = ImageTexture.new()
-			image_texture.create_from_image(image) #,6
 			game_media_data.support_texture = image_texture
 
 	# Video
@@ -277,84 +283,90 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 	var media_path := RetroHubConfig.get_gamemedia_dir() + "/" + game_data.system_path
 	var game_path := game_data.path.get_file().get_basename()
 
-	var image := Image.new()
 	var path : String
 
 	# Logo
 	if not game_media_data.logo:
 		path = media_path + "/logo/" + game_path + ".png"
 		if types & Type.LOGO and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading logo image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.logo = image_texture
 
 	# Screenshot
 	if not game_media_data.screenshot:
 		path = media_path + "/screenshot/" + game_path + ".png"
 		if types & Type.SCREENSHOT and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading screenshot image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.screenshot = image_texture
 
 	# Title screen
 	if not game_media_data.title_screen:
 		path = media_path + "/title-screen/" + game_path + ".png"
 		if types & Type.TITLE_SCREEN and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading title screen image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.title_screen = image_texture
 
 	# Box render
 	if not game_media_data.box_render:
 		path = media_path + "/box-render/" + game_path + ".png"
 		if types & Type.BOX_RENDER and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading box render image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.box_render = image_texture
 
 	# Box texture
 	if not game_media_data.box_texture:
 		path = media_path + "/box-texture/" + game_path + ".png"
 		if types & Type.BOX_TEXTURE and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading box texture image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.box_texture = image_texture
 
 	# Support render
 	if not game_media_data.support_render:
 		path = media_path + "/support-render/" + game_path + ".png"
 		if types & Type.SUPPORT_RENDER and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading support render image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.support_render = image_texture
 
 	# Support texture
 	if not game_media_data.support_texture:
 		path = media_path + "/support-texture/" + game_path + ".png"
 		if types & Type.SUPPORT_TEXTURE and FileAccess.file_exists(path):
-			if image.load(path):
+			var image := Image.load_from_file(path)
+			image.generate_mipmaps()
+			var image_texture := ImageTexture.create_from_image(image)
+			if not image_texture:
 				push_error("Error when loading support texture image for game %s!" % game_data.name)
 			else:
-				var image_texture := ImageTexture.new()
-				image_texture.create_from_image(image) #,6
 				game_media_data.support_texture = image_texture
 
 	# Video
