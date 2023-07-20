@@ -55,7 +55,6 @@ func load_json(path: String):
 			push_warning("Error when opening %s, settings will be reset..." % path)
 			return {}
 		var json := JSON.new()
-		json.parse(file.get_as_text())
 		if json.parse(file.get_as_text()):
 			print("Error")
 			#push_warning("Error when parsing JSON for %s at line %d: %s. Settings will be reset..." % [path, json.get_error_line(), json.get_error_string()])

@@ -260,15 +260,12 @@ func gen_random_media_data(game_data: RetroHubGameData, types: int) -> RetroHubG
 			game_media_data.support_texture = image_texture
 
 	# Video
-	# FIXME: VideoStreamGDNative was removed from Godot, need to figure how to proceed from here
-	"""
+
 	path = base_path + "video/video.mp4"
 	if types & Type.VIDEO and FileAccess.file_exists(path):
-		var video_stream := VideoStreamGDNative.new()
-		#var video_stream := VideoStreamWebm.new()
+		var video_stream := VideoStream.new()
 		video_stream.set_file(path)
 		game_media_data.video = video_stream
-	"""
 
 	# Manual
 	## FIXME: Very likely we won't be able to support PDF reading.
@@ -370,15 +367,12 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.support_texture = image_texture
 
 	# Video
-	# FIXME: VideoStreamGDNative was removed from Godot, need to figure how to proceed from here
-	"""
 	if not game_media_data.video:
 		path = media_path + "/video/" + game_path + ".mp4"
 		if types & Type.VIDEO and FileAccess.file_exists(path):
-			var video_stream := VideoStreamGDNative.new()
+			var video_stream := VideoStream.new()
 			video_stream.set_file(path)
 			game_media_data.video = video_stream
-	"""
 
 	# Manual
 	## FIXME: Very likely we won't be able to support PDF reading.
