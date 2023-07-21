@@ -1,27 +1,23 @@
-tool
+@tool
 extends Control
 
-onready var n_games_option := $"%GamesOption"
-onready var n_games_tab := $"%GamesTab"
-onready var n_random_num := $"%RandomNum"
-onready var n_local_label := $"%LocalLabel"
+@onready var n_games_option := $"%GamesOption"
+@onready var n_games_tab := $"%GamesTab"
+@onready var n_random_num := $"%RandomNum"
+@onready var n_local_label := $"%LocalLabel"
 
-onready var base_text : String = n_local_label.text
+@onready var base_text : String = n_local_label.text
 
 var settings : Dictionary
 
-var file_popup : FileDialog setget set_file_popup
-var file_selected_path : String
+var file_popup : EditorFileDialog: set = set_file_popup
 
 func _ready():
+	print(base_text % RetroHubConfig.get_gamelists_dir())
 	n_local_label.text = base_text % RetroHubConfig.get_gamelists_dir()
 
-func set_file_popup(_file_popup: FileDialog):
+func set_file_popup(_file_popup: EditorFileDialog):
 	file_popup = _file_popup
-	file_popup.connect("file_selected", self, "_on_file_selected")
-
-func _on_file_selected(file: String):
-	file_selected_path = file
 
 func load_settings(_settings: Dictionary):
 	settings = _settings
@@ -40,10 +36,6 @@ func load_settings(_settings: Dictionary):
 func get_settings():
 	return settings
 
-func ask_file():
-	file_selected_path = ""
-	file_popup.popup_centered()
-
 func _on_GamesOption_item_selected(index):
 	n_games_tab.current_tab = index
 	match index:
@@ -53,7 +45,6 @@ func _on_GamesOption_item_selected(index):
 			settings["games_mode"] = "random"
 		2:
 			settings["games_mode"] = "local"
-
 
 func _on_RandomNum_value_changed(value):
 	settings["random_num"] = int(value)

@@ -48,8 +48,8 @@ func request_file_load(base_path: String) -> void:
 func request_folder_load(base_path: String) -> void:
 	pass
 
-func load_app_icon(icon: int) -> Texture:
-	return Texture.new()
+func load_app_icon(icon: int) -> Texture2D:
+	return Texture2D.new()
 
 func show_virtual_keyboard() -> void:
 	pass

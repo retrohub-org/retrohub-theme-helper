@@ -28,17 +28,18 @@ const version_major := 0
 const version_minor := 1
 const version_patch := 2
 const version_extra := "-beta"
-const version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
+# FIXME: This worked before as "const version_str". Report regression?
+var version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
 
 
-onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
+@onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
 
 func _enter_tree():
 	_joypad_echo_timer.wait_time = 1.0
 	_joypad_echo_interval_timer.wait_time = 0.1
 	_joypad_echo_timer.one_shot = true
-	_joypad_echo_timer.connect("timeout", self, "_on_joypad_echo_timer_timeout")
-	_joypad_echo_interval_timer.connect("timeout", self, "_on_joypad_echo_interval_timer_timeout")
+	_joypad_echo_timer.connect("timeout", Callable(self, "_on_joypad_echo_timer_timeout"))
+	_joypad_echo_interval_timer.connect("timeout", Callable(self, "_on_joypad_echo_interval_timer_timeout"))
 	add_child(_joypad_echo_timer)
 	add_child(_joypad_echo_interval_timer)
 
@@ -49,9 +50,9 @@ func _ready():
 
 func _notification(what):
 	match what:
-		NOTIFICATION_WM_FOCUS_IN:
+		NOTIFICATION_APPLICATION_FOCUS_IN:
 			emit_signal("app_received_focus")
-		NOTIFICATION_WM_FOCUS_OUT:
+		NOTIFICATION_APPLICATION_FOCUS_OUT:
 			emit_signal("app_lost_focus")
 
 func _on_joypad_echo_timer_timeout():
@@ -87,12 +88,14 @@ func _on_app_lost_focus():
 
 func _load_helper_config():
 	var path := "res://addons/retrohub_theme_helper/config.json"
-	var file := File.new()
-	if not file.open(path, File.READ):
-		var result := JSON.parse(file.get_as_text())
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file:
+		var test_json_conv = JSON.new()
+		test_json_conv.parse(file.get_as_text())
+		var result := test_json_conv.get_data()
 		file.close()
-		if not result.error:
-			_helper_config = result.result
+		if result:
+			_helper_config = result
 
 func is_main_app() -> bool:
 	return false
@@ -101,7 +104,7 @@ func is_input_echo() -> bool:
 	return _is_echo
 
 func load_titles():
-	yield(get_tree(), "idle_frame")
+	await get_tree().process_frame
 	if _helper_config.has("games_mode"):
 		match _helper_config["games_mode"]:
 			"random":
@@ -161,7 +164,7 @@ func gen_random_game(system):
 func load_local_titles():
 	RetroHubConfig.load_game_data_files()
 	var systems : Dictionary = RetroHubConfig.systems
-	if not systems.empty():
+	if not systems.is_empty():
 		emit_signal("system_receive_start")
 		for system in systems.values():
 			emit_signal("system_received", system)

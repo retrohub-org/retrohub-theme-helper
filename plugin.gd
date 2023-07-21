@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 
 const THEME_SETTINGS_PATH := "res://theme.json"
@@ -18,14 +18,14 @@ func _exit_tree():
 	remove_dock()
 	remove_singletons()
 
-func disable_plugin():
+func _disable_plugin():
 	save_settings()
 
 func build():
 	save_settings()
 	return true
 
-func save_external_data():
+func _save_external_data():
 	save_settings()
 
 func add_singletons():
@@ -38,7 +38,7 @@ func add_singletons():
 	add_autoload_singleton("RetroHubMedia", "res://addons/retrohub_theme_helper/singletons/Media.gd")
 
 func add_dock():
-	dock = preload("res://addons/retrohub_theme_helper/dock/Dock.tscn").instance()
+	dock = preload("res://addons/retrohub_theme_helper/dock/Dock.tscn").instantiate()
 	add_control_to_dock(EditorPlugin.DOCK_SLOT_LEFT_BR, dock)
 
 func load_settings():
@@ -49,18 +49,17 @@ func load_settings():
 	dock.load_settings(theme_settings, addon_settings)
 
 func load_json(path: String):
-	var file := File.new()
-	var dir := Directory.new()
-	if dir.file_exists(path):
-		if file.open(path, File.READ):
+	if FileAccess.file_exists(path):
+		var file := FileAccess.open(path, FileAccess.READ)
+		if not file:
 			push_warning("Error when opening %s, settings will be reset..." % path)
 			return {}
-		var result := JSON.parse(file.get_as_text())
-		if result.error:
-			push_warning("Error when parsing JSON for %s at line %d: %s. Settings will be reset..." % [path, result.error_line, result.error_string])
+		var json := JSON.new()
+		if json.parse(file.get_as_text()):
+			print("Error")
+			#push_warning("Error when parsing JSON for %s at line %d: %s. Settings will be reset..." % [path, json.get_error_line(), json.get_error_string()])
 			return {}
-		file.close()
-		return result.result
+		return json.data
 	return {}
 
 func remove_singletons():
@@ -83,9 +82,9 @@ func save_settings():
 	save_json(addon_settings, ADDON_SETTINGS_PATH)
 	
 func save_json(dict: Dictionary, path: String):
-	var file := File.new()
-	if file.open(path, File.WRITE):
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if not file:
 		push_warning("Error when opening %s, settings will not be saved." % path)
 		return
-	file.store_string(JSON.print(dict, "\t"))
+	file.store_string(JSON.stringify(dict, "\t", false))
 	file.close()

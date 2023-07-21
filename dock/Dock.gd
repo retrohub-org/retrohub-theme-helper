@@ -1,14 +1,16 @@
-tool
+@tool
 extends Control
 
-onready var n_theme := $"%Theme"
-onready var n_games := $"%Games"
-onready var n_config := $"%Config"
+@onready var n_theme := $"%Theme"
+@onready var n_games := $"%Games"
+@onready var n_config := $"%Config"
 
-onready var n_file_dialog := $"%FileDialog"
+var n_file_dialog : EditorFileDialog
+
+func _ready():
+	n_file_dialog = EditorFileDialog.new()
 
 func setup_popup(editor_control: Control):
-	n_file_dialog.get_parent().remove_child(n_file_dialog)
 	editor_control.add_child(n_file_dialog)
 
 func get_theme_settings() -> Dictionary:

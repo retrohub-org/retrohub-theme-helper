@@ -170,7 +170,7 @@ func random_title() -> String:
 func random_description() -> String:
 	return description_data[randi() % description_data.size()]
 
-func random_genres() -> String:
+func random_genres() -> Array:
 	var genres = []
 	for i in range(1 + randi() % 4):
 		genres.append(genre_data[randi() % genre_data.size()])
