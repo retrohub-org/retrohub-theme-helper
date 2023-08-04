@@ -3,11 +3,11 @@ class_name AccessibilityFocus
 
 @export var previous : NodePath
 @export var next : NodePath
-@export var mode : int = 2 # (int, "None", "Click", "All")
+@export var mode : Control.FocusMode = Control.FOCUS_ALL
 
 var _old_next : NodePath
 var _old_previous : NodePath
-var _old_mode : int
+var _old_mode : Control.FocusMode
 
 var parent : Control
 
@@ -39,8 +39,8 @@ func _ready():
 
 		set(neighbour_str, NodePath(node_path_str))
 
-	RetroHubConfig.connect("config_ready", Callable(self, "_on_config_ready"))
-	RetroHubConfig.connect("config_updated", Callable(self, "_on_config_updated"))
+	RetroHubConfig.config_ready.connect(_on_config_ready)
+	RetroHubConfig.config_updated.connect(_on_config_updated)
 
 	if RetroHub.is_main_app():
 		_on_config_ready(RetroHubConfig.config)
