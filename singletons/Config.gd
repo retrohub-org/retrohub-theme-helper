@@ -38,7 +38,7 @@ func load_game_data_files():
 	var file_name := dir.get_next()
 	while file_name != "":
 		if dir.current_is_dir() and _systems_raw.has(file_name):
-			load_system_gamelists_files(get_gamelists_dir() + "/" + file_name, file_name)
+			load_system_gamelists_files(get_gamelists_dir().path_join(file_name), file_name)
 		# We are not interested in files, only folders
 		file_name = dir.get_next()
 	dir.list_dir_end()
@@ -53,7 +53,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 		return
 	var file_name = dir.get_next()
 	while file_name != "":
-		var full_path = folder_path + "/" + file_name
+		var full_path = folder_path.path_join(file_name)
 		if dir.current_is_dir():
 			# Recurse
 			# TODO: prevent infinite recursion with shortcuts/symlinks
@@ -106,7 +106,7 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	return true
 
 func get_game_data_path_from_file(system_name: String, file_name: String) -> String:
-	return get_gamelists_dir() + "/" + system_name + "/" + file_name.get_file().trim_suffix(file_name.get_extension()) + "json"
+	return get_gamelists_dir().path_join(system_name).path_join(file_name.get_file().trim_suffix(file_name.get_extension()) + "json")
 
 func is_file_from_system(file_name: String, system_name: String) -> bool:
 	var extensions : Array = _systems_raw[system_name]["extension"]

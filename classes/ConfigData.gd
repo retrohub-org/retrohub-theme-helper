@@ -1,6 +1,7 @@
 extends Resource
 class_name ConfigData
 
+var config_version : int = 1
 var is_first_time : bool = true
 var games_dir : String = FileUtils.get_home_dir() + "/ROMS"
 var current_theme : String = "default"
@@ -29,6 +30,7 @@ var virtual_keyboard_show_on_controller : bool = true
 var virtual_keyboard_show_on_mouse : bool = false
 var accessibility_screen_reader_enabled : bool = true
 
+const KEY_CONFIG_VERSION = "config_version"
 const KEY_IS_FIRST_TIME = "is_first_time"
 const KEY_GAMES_DIR = "games_dir"
 const KEY_CURRENT_THEME = "current_theme"

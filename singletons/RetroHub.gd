@@ -25,8 +25,8 @@ var _helper_config : Dictionary
 var _is_echo : bool
 
 const version_major := 0
-const version_minor := 1
-const version_patch := 2
+const version_minor := 2
+const version_patch := 0
 const version_extra := "-beta"
 # FIXME: This worked before as "const version_str". Report regression?
 var version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]

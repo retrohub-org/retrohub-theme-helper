@@ -48,4 +48,3 @@ func _on_GamesOption_item_selected(index):
 
 func _on_RandomNum_value_changed(value):
 	settings["random_num"] = int(value)
-
