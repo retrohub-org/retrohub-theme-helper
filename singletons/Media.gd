@@ -28,6 +28,17 @@ var support_images := [
 	"rectangle_vertical.png", "rectangle_horizontal.png", "disc.png"
 ]
 
+var blurhash_existing_images := {
+	"logo.png": "L6S~L[of~Wt7WBayt7j[_3fQ9FfQ",
+	"4_3.png": "L6S~I,of~WofNGfQxufQ~WfQ9Fj[",
+	"16_9.png": "L5T8%fof~WofR*fQxufQ_3fQ4.j[",
+	"rectangle.png": "LcDvZixu00M{ofj[WBayM{oft7WB",
+	"square.png": "LSFiJh?H00M{ofj[ayayE1t7xuM{",
+	"rectangle_vertical.png": "LOCGPwM{00%M?bRjD%xaRjj[ofWB",
+	"rectangle_horizontal.png": "LKCP@eof9ZfQ?bj[M{fQ00ay%2fQ",
+	"disc.png": "LFHenGt74nay%2j[R*ay00WB00ay",
+}
+
 var _media_cache := {}
 
 var _thread : Thread
@@ -35,6 +46,8 @@ var _semaphore : Semaphore
 var _processing_mutex := Mutex.new()
 var _queue_mutex := Mutex.new()
 var _queue := []
+
+var _blurhash_cache := {}
 
 func _enter_tree():
 	_start_thread()
@@ -84,6 +97,9 @@ func t_process_media_requests():
 
 func _clear_media_cache():
 	_media_cache.clear()
+
+func remove_media_cache(game_data: RetroHubGameData):
+	_media_cache.erase(game_data)
 
 func convert_type_bitmask_to_list(bitmask: int) -> Array:
 	var arr := []
@@ -168,12 +184,22 @@ func retrieve_media_blurhash(game_data: RetroHubGameData, types: Type = Type.ALL
 		push_error("Error: game %s has no media" % game_data.name)
 		return null
 
+	if RetroHub._helper_config.has("games_mode"):
+		match RetroHub._helper_config["games_mode"]:
+			"local":
+				return _load_blurhash(game_data, types)
+			"random", _:
+				return _fetch_random_blurhash(game_data, types)
+	else:
+		return _fetch_random_blurhash(game_data, types)
+
+func _load_blurhash(game_data: RetroHubGameData, types: Type = Type.ALL) -> RetroHubGameMediaData:
 	var game_media_data := RetroHubGameMediaData.new()
 
 	var media_path := RetroHubConfig.get_gamemedia_dir().path_join(game_data.system_path)
 	var game_path := game_data.path.get_file().get_basename()
 
-	var blurhashes := _compute_blurhash(game_data)
+	var blurhashes := _get_blurhash(game_data)
 
 	# Logo
 	if types & Type.LOGO and blurhashes.has("logo"):
@@ -318,6 +344,39 @@ func gen_random_media_data(game_data: RetroHubGameData, types: int) -> RetroHubG
 
 	return game_media_data
 
+func _fetch_random_blurhash(game_data: RetroHubGameData, types: int) -> RetroHubGameMediaData:
+	var game_media_data := RetroHubGameMediaData.new()
+
+	# Logo
+	if types & Type.LOGO:
+		game_media_data.logo = BlurHash.decode(blurhash_existing_images["logo.png"] , 16, 9)
+
+	# Screenshot
+	if types & Type.SCREENSHOT:
+		game_media_data.screenshot = BlurHash.decode(blurhash_existing_images[game_images[randi() % game_images.size()]], 16, 9)
+
+	# Title screen
+	if types & Type.TITLE_SCREEN:
+		game_media_data.title_screen = BlurHash.decode(blurhash_existing_images[game_images[randi() % game_images.size()]], 16, 9)
+
+	# Box render
+	if types & Type.BOX_RENDER:
+		game_media_data.box_render = BlurHash.decode(blurhash_existing_images[box_images[randi() % box_images.size()]], 16, 9)
+
+	# Box texture
+	if types & Type.BOX_TEXTURE:
+		game_media_data.box_texture = BlurHash.decode(blurhash_existing_images[box_images[randi() % box_images.size()]], 16, 9)
+
+	# Support render
+	if types & Type.SUPPORT_RENDER:
+		game_media_data.support_render = BlurHash.decode(blurhash_existing_images[support_images[randi() % support_images.size()]], 16, 9)
+
+	# Support texture
+	if types & Type.SUPPORT_TEXTURE:
+		game_media_data.support_texture = BlurHash.decode(blurhash_existing_images[support_images[randi() % support_images.size()]], 16, 9)
+
+	return game_media_data
+
 func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMediaData:
 	if not _media_cache.has(game_data):
 		_media_cache[game_data] = RetroHubGameMediaData.new()
@@ -425,7 +484,21 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 
 	return game_media_data
 
+func _get_blurhash(game_data: RetroHubGameData) -> Dictionary:
+	var media_path := RetroHubConfig.get_gamemedia_dir().path_join(game_data.system_path)
+	var game_path := game_data.path.get_file().get_basename()
+
+	var blurhash_path := media_path.path_join("blurhash").path_join(game_path + ".json")
+	if FileAccess.file_exists(blurhash_path):
+		return JSONUtils.load_json_file(blurhash_path)
+
+	return _compute_blurhash(game_data)
+
 func _compute_blurhash(game_data: RetroHubGameData) -> Dictionary:
+	if _blurhash_cache.has(game_data):
+		return _blurhash_cache[game_data]
+
+	print("BlurHash non existant for ", game_data.name, ", computing it. Expect slowdown!")
 	var media_data := load_media_data(game_data,
 		Type.LOGO | Type.SCREENSHOT | Type.TITLE_SCREEN | \
 		Type.BOX_RENDER | Type.BOX_TEXTURE | \
@@ -450,4 +523,5 @@ func _compute_blurhash(game_data: RetroHubGameData) -> Dictionary:
 		if blurhash.is_empty(): continue
 		hash_data[key] = blurhash
 
+	_blurhash_cache[game_data] = hash_data
 	return hash_data
