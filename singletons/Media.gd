@@ -159,6 +159,52 @@ func retrieve_media_data_async(game_data: RetroHubGameData, types: int = Type.AL
 	_semaphore.post()
 	_queue_mutex.unlock()
 
+func retrieve_media_data_and_blurhash_async(game_data: RetroHubGameData, types: Type = Type.ALL, priority: bool = false) -> RetroHubGameMediaData:
+	retrieve_media_data_async(game_data, types, priority)
+	return retrieve_media_blurhash(game_data, types)
+
+func retrieve_media_blurhash(game_data: RetroHubGameData, types: Type = Type.ALL) -> RetroHubGameMediaData:
+	if not game_data.has_media:
+		push_error("Error: game %s has no media" % game_data.name)
+		return null
+
+	var game_media_data := RetroHubGameMediaData.new()
+
+	var media_path := RetroHubConfig.get_gamemedia_dir().path_join(game_data.system_path)
+	var game_path := game_data.path.get_file().get_basename()
+
+	var blurhashes := _compute_blurhash(game_data)
+
+	# Logo
+	if types & Type.LOGO and blurhashes.has("logo"):
+		game_media_data.logo = BlurHash.decode(blurhashes["logo"], 16, 9)
+
+	# Screenshot
+	if types & Type.SCREENSHOT and blurhashes.has("screenshot"):
+		game_media_data.screenshot = BlurHash.decode(blurhashes["screenshot"], 16, 9)
+
+	# Title screen
+	if types & Type.TITLE_SCREEN and blurhashes.has("title-screen"):
+		game_media_data.title_screen = BlurHash.decode(blurhashes["title-screen"], 16, 9)
+
+	# Box render
+	if types & Type.BOX_RENDER and blurhashes.has("box-render"):
+		game_media_data.box_render = BlurHash.decode(blurhashes["box-render"], 16, 9)
+
+	# Box texture
+	if types & Type.BOX_TEXTURE and blurhashes.has("box-texture"):
+		game_media_data.box_texture = BlurHash.decode(blurhashes["box-texture"], 16, 9)
+
+	# Support render
+	if types & Type.SUPPORT_RENDER and blurhashes.has("support-render"):
+		game_media_data.support_render = BlurHash.decode(blurhashes["support-render"], 16, 9)
+
+	# Support texture
+	if types & Type.SUPPORT_TEXTURE and blurhashes.has("support-texture"):
+		game_media_data.support_texture = BlurHash.decode(blurhashes["support-texture"], 16, 9)
+
+	return game_media_data
+
 func cancel_media_data_async(game_data: RetroHubGameData) -> void:
 	if _queue.is_empty():
 		return
@@ -378,3 +424,30 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 	## FIXME: Very likely we won't be able to support PDF reading.
 
 	return game_media_data
+
+func _compute_blurhash(game_data: RetroHubGameData) -> Dictionary:
+	var media_data := load_media_data(game_data,
+		Type.LOGO | Type.SCREENSHOT | Type.TITLE_SCREEN | \
+		Type.BOX_RENDER | Type.BOX_TEXTURE | \
+		Type.SUPPORT_RENDER | Type.SUPPORT_TEXTURE
+	)
+
+	var hash_data := {}
+	for data in [
+		["logo", media_data.logo],
+		["screenshot", media_data.screenshot],
+		["title-screen", media_data.title_screen],
+		["box-render", media_data.box_render],
+		["box-texture", media_data.box_texture],
+		["support-render", media_data.support_render],
+		["support-texture", media_data.support_texture]
+	]:
+		var key : String = data[0]
+		var texture : Texture2D = data[1]
+		if not texture: continue
+
+		var blurhash := BlurHash.encode(texture, 4, 3)
+		if blurhash.is_empty(): continue
+		hash_data[key] = blurhash
+
+	return hash_data
