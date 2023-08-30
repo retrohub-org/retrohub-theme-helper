@@ -31,17 +31,7 @@ const version_extra := "-beta"
 # FIXME: This worked before as "const version_str". Report regression?
 var version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, version_extra]
 
-
 @onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
-
-func _enter_tree():
-	_joypad_echo_timer.wait_time = 1.0
-	_joypad_echo_interval_timer.wait_time = 0.1
-	_joypad_echo_timer.one_shot = true
-	_joypad_echo_timer.connect("timeout", Callable(self, "_on_joypad_echo_timer_timeout"))
-	_joypad_echo_interval_timer.connect("timeout", Callable(self, "_on_joypad_echo_interval_timer_timeout"))
-	add_child(_joypad_echo_timer)
-	add_child(_joypad_echo_interval_timer)
 
 func _ready():
 	emit_signal("app_initializing", true)
@@ -54,28 +44,6 @@ func _notification(what):
 			emit_signal("app_received_focus")
 		NOTIFICATION_APPLICATION_FOCUS_OUT:
 			emit_signal("app_lost_focus")
-
-func _on_joypad_echo_timer_timeout():
-	_joypad_echo_interval_timer.start()
-	_joypad_echo_interval_timer.wait_time = 0
-
-func _on_joypad_echo_interval_timer_timeout():
-	Input.parse_input_event(_joypad_echo_event)
-
-func _input(event):
-	_is_echo = event.is_echo()
-	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
-		if Input.is_action_just_released("ui_left") or Input.is_action_just_released("ui_up") \
-			or Input.is_action_just_released("ui_right") or Input.is_action_just_released("ui_down"):
-			_joypad_echo_timer.stop()
-			_joypad_echo_interval_timer.stop()
-
-		if Input.is_action_just_pressed("ui_left") or Input.is_action_just_pressed("ui_up") \
-			or Input.is_action_just_pressed("ui_right") or Input.is_action_just_pressed("ui_down"):
-			if _joypad_echo_timer.is_stopped():
-				_joypad_echo_event = event
-				_joypad_echo_timer.start()
-				print("Waiting...")
 
 func _on_app_closing():
 	emit_signal("app_closing")
