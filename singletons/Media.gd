@@ -95,7 +95,10 @@ func t_process_media_requests():
 		var media_data := retrieve_media_data(game_data, types)
 		call_thread_safe("emit_signal", "media_loaded", media_data, game_data, types)
 
-func _clear_media_cache():
+func clear_media_cache(data: RetroHubGameData):
+	_media_cache.erase(data)
+
+func clear_all_media_cache():
 	_media_cache.clear()
 
 func remove_media_cache(game_data: RetroHubGameData):
