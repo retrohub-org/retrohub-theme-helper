@@ -380,6 +380,26 @@ func _fetch_random_blurhash(game_data: RetroHubGameData, types: int) -> RetroHub
 
 	return game_media_data
 
+func _find_image_path(path: String) -> String:
+	var extensions : Array[String] = [
+		".png", ".jpg"
+	]
+	for ext in extensions:
+		var full_path := path + ext
+		if FileAccess.file_exists(full_path):
+			return full_path
+	return ""
+
+func _find_video_path(path: String) -> String:
+	var extensions : Array[String] = [
+		".mp4"
+	]
+	for ext in extensions:
+		var full_path := path + ext
+		if FileAccess.file_exists(full_path):
+			return full_path
+	return ""
+
 func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMediaData:
 	if not _media_cache.has(game_data):
 		_media_cache[game_data] = RetroHubGameMediaData.new()
@@ -391,9 +411,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 	var path : String
 
 	# Logo
-	if not game_media_data.logo:
-		path = media_path + "/logo/" + game_path + ".png"
-		if types & Type.LOGO and FileAccess.file_exists(path):
+	if not game_media_data.logo and types & Type.LOGO:
+		path = _find_image_path(media_path.path_join("logo").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -403,9 +423,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.logo = image_texture
 
 	# Screenshot
-	if not game_media_data.screenshot:
-		path = media_path + "/screenshot/" + game_path + ".png"
-		if types & Type.SCREENSHOT and FileAccess.file_exists(path):
+	if not game_media_data.screenshot and types & Type.SCREENSHOT:
+		path = _find_image_path(media_path.path_join("screenshot").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -415,9 +435,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.screenshot = image_texture
 
 	# Title screen
-	if not game_media_data.title_screen:
-		path = media_path + "/title-screen/" + game_path + ".png"
-		if types & Type.TITLE_SCREEN and FileAccess.file_exists(path):
+	if not game_media_data.title_screen and types & Type.TITLE_SCREEN:
+		path = _find_image_path(media_path.path_join("title-screen").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -427,9 +447,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.title_screen = image_texture
 
 	# Box render
-	if not game_media_data.box_render:
-		path = media_path + "/box-render/" + game_path + ".png"
-		if types & Type.BOX_RENDER and FileAccess.file_exists(path):
+	if not game_media_data.box_render and types & Type.BOX_RENDER:
+		path = _find_image_path(media_path.path_join("box-render").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -439,9 +459,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.box_render = image_texture
 
 	# Box texture
-	if not game_media_data.box_texture:
-		path = media_path + "/box-texture/" + game_path + ".png"
-		if types & Type.BOX_TEXTURE and FileAccess.file_exists(path):
+	if not game_media_data.box_texture and types & Type.BOX_TEXTURE:
+		path = _find_image_path(media_path.path_join("box-texture").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -451,9 +471,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.box_texture = image_texture
 
 	# Support render
-	if not game_media_data.support_render:
-		path = media_path + "/support-render/" + game_path + ".png"
-		if types & Type.SUPPORT_RENDER and FileAccess.file_exists(path):
+	if not game_media_data.support_render and types & Type.SUPPORT_RENDER:
+		path = _find_image_path(media_path.path_join("support-render").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -463,9 +483,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.support_render = image_texture
 
 	# Support texture
-	if not game_media_data.support_texture:
-		path = media_path + "/support-texture/" + game_path + ".png"
-		if types & Type.SUPPORT_TEXTURE and FileAccess.file_exists(path):
+	if not game_media_data.support_texture and types & Type.SUPPORT_TEXTURE:
+		path = _find_image_path(media_path.path_join("support-texture").path_join(game_path))
+		if not path.is_empty():
 			var image := Image.load_from_file(path)
 			image.generate_mipmaps()
 			var image_texture := ImageTexture.create_from_image(image)
@@ -475,9 +495,9 @@ func load_media_data(game_data: RetroHubGameData, types: int) -> RetroHubGameMed
 				game_media_data.support_texture = image_texture
 
 	# Video
-	if not game_media_data.video:
-		path = media_path + "/video/" + game_path + ".mp4"
-		if types & Type.VIDEO and FileAccess.file_exists(path):
+	if not game_media_data.video and types & Type.VIDEO:
+		path = _find_video_path(media_path.path_join("video").path_join(game_path))
+		if not path.is_empty():
 			var video_stream := VideoStream.new()
 			video_stream.set_file(path)
 			game_media_data.video = video_stream
