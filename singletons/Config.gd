@@ -102,6 +102,8 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	game.play_count = data["play_count"]
 	game.last_played = data["last_played"]
 	game.has_media = data["has_media"]
+	if data.has("emulator"):
+		game.emulator = data["emulator"]
 
 	return true
 
