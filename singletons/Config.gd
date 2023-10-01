@@ -114,8 +114,14 @@ func is_file_from_system(file_name: String, system_name: String) -> bool:
 	var extensions : Array = _systems_raw[system_name]["extension"]
 	var file_extension := ("." + file_name.get_extension()).to_lower()
 	for extension in extensions:
-		if extension.to_lower() == file_extension:
-			return true
+		# Defined as an extension
+		if extension.begins_with("."):
+			if extension.to_lower() == file_extension:
+				return true
+		# Defined as exact file name
+		else:
+			if extension.to_lower() == file_name.to_lower():
+				return true
 
 	return false
 
