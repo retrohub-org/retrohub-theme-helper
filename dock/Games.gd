@@ -13,8 +13,7 @@ var settings : Dictionary
 var file_popup : EditorFileDialog: set = set_file_popup
 
 func _ready():
-	print(base_text % RetroHubConfig.get_gamelists_dir())
-	n_local_label.text = base_text % RetroHubConfig.get_gamelists_dir()
+	n_local_label.text = base_text % RetroHubConfig._get_gamelists_dir()
 
 func set_file_popup(_file_popup: EditorFileDialog):
 	file_popup = _file_popup

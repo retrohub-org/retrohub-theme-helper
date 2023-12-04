@@ -9,9 +9,9 @@ signal theme_config_updated(key, old_value, new_value)
 
 signal game_data_updated(game_data)
 
+var config : ConfigData = ConfigData.new()
 var games : Array
 var systems : Dictionary
-var config : ConfigData = ConfigData.new()
 
 var _systems_raw : Dictionary
 
@@ -19,33 +19,33 @@ var _theme_config : Dictionary
 
 func _ready():
 	if not Engine.is_editor_hint():
-		load_systems()
+		_load_systems()
 
-func load_systems():
+func _load_systems():
 	# Default systems
-	_systems_raw = JSONUtils.map_array_by_key(JSONUtils.load_json_file(get_systems_file()), "name")
+	_systems_raw = JSONUtils.map_array_by_key(JSONUtils.load_json_file(_get_systems_file()), "name")
 	for key in _systems_raw:
 		if _systems_raw[key].has("extends"):
 			_systems_raw[key].merge(_systems_raw[_systems_raw[key]["extends"]])
 
-func load_game_data_files():
+func _load_game_data_files():
 	games.clear()
 	systems.clear()
-	var dir := DirAccess.open(get_gamelists_dir())
+	var dir := DirAccess.open(_get_gamelists_dir())
 	if not dir or dir.list_dir_begin(): # TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
-		push_error("Error when opening game directory " + get_gamelists_dir())
+		push_error("Error when opening game directory " + _get_gamelists_dir())
 		return
 	var file_name := dir.get_next()
 	while file_name != "":
 		if dir.current_is_dir() and _systems_raw.has(file_name):
-			load_system_gamelists_files(get_gamelists_dir().path_join(file_name), file_name)
+			_load_system_gamelists_files(_get_gamelists_dir().path_join(file_name), file_name)
 		# We are not interested in files, only folders
 		file_name = dir.get_next()
 	dir.list_dir_end()
 	# Finally order the games array
 	games.sort_custom(Callable(RetroHubGameData, "sort"))
 
-func load_system_gamelists_files(folder_path: String, system_name: String):
+func _load_system_gamelists_files(folder_path: String, system_name: String):
 	print("Loading games from directory " + folder_path)
 	var dir := DirAccess.open(folder_path)
 	if not dir or dir.list_dir_begin() :# TODOGODOT4 fill missing arguments https://github.com/godotengine/godot/pull/40547
@@ -57,7 +57,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 		if dir.current_is_dir():
 			# Recurse
 			# TODO: prevent infinite recursion with shortcuts/symlinks
-			load_system_gamelists_files(full_path, system_name)
+			_load_system_gamelists_files(full_path, system_name)
 		else:
 			if not systems.has(system_name):
 				var system := RetroHubSystemData.new()
@@ -75,7 +75,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 			game.system = systems[system_name]
 			game.system_path = system_name
 			game.has_metadata = true
-			if not fetch_game_data(full_path, game):
+			if not _fetch_game_data(full_path, game):
 				push_error("Metadata file corrupt!")
 				game.name = file_name
 				game.age_rating = "0/0/0"
@@ -84,7 +84,7 @@ func load_system_gamelists_files(folder_path: String, system_name: String):
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
-func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
+func _fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	var data : Dictionary = JSONUtils.load_json_file(path)
 	if data.is_empty():
 		return false
@@ -104,13 +104,20 @@ func fetch_game_data(path: String, game: RetroHubGameData) -> bool:
 	game.has_media = data["has_media"]
 	if data.has("emulator"):
 		game.emulator = data["emulator"]
+	if data.has("box_texture_regions"):
+		for key in data["box_texture_regions"]:
+			var region_data : PackedFloat64Array = data["box_texture_regions"][key].split_floats(";")
+			if region_data.size() < 4: continue
+			var key_idx : int = RetroHubGameData.BoxTextureRegions.keys().find(key.to_upper())
+			if key_idx == -1: key_idx = int(key)
+			game.box_texture_regions[key_idx] = Rect2(region_data[0], region_data[1], region_data[2], region_data[3])
 
 	return true
 
-func get_game_data_path_from_file(system_name: String, file_name: String) -> String:
-	return get_gamelists_dir().path_join(system_name).path_join(file_name.get_file().trim_suffix(file_name.get_extension()) + "json")
+func _get_game_data_path_from_file(system_name: String, file_name: String) -> String:
+	return _get_gamelists_dir().path_join(system_name).path_join(file_name.get_file().trim_suffix(file_name.get_extension()) + "json")
 
-func is_file_from_system(file_name: String, system_name: String) -> bool:
+func _is_file_from_system(file_name: String, system_name: String) -> bool:
 	var extensions : Array = _systems_raw[system_name]["extension"]
 	var file_extension := ("." + file_name.get_extension()).to_lower()
 	for extension in extensions:
@@ -133,24 +140,18 @@ func get_theme_config(key, default_value):
 func set_theme_config(key, value):
 	_theme_config[key] = value
 
-func get_config_dir() -> String:
+func _get_config_dir() -> String:
 	match FileUtils.get_os_id():
 		FileUtils.OS_ID.WINDOWS:
 			return FileUtils.get_home_dir() + "/RetroHub"
 		_:
 			return FileUtils.get_home_dir() + "/.retrohub"
 
-func get_config_file() -> String:
-	return get_config_dir() + "/rh_config.json"
-
-func get_systems_file() -> String:
+func _get_systems_file() -> String:
 	return "res://addons/retrohub_theme_helper/data/systems.json"
 
-func get_themes_dir() -> String:
-	return get_config_dir() + "/themes"
+func _get_gamelists_dir() -> String:
+	return _get_config_dir() + "/gamelists"
 
-func get_gamelists_dir() -> String:
-	return get_config_dir() + "/gamelists"
-
-func get_gamemedia_dir() -> String:
-	return get_config_dir() + "/gamemedia"
+func _get_gamemedia_dir() -> String:
+	return _get_config_dir() + "/gamemedia"
