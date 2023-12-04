@@ -10,6 +10,19 @@ var color_unavailable := Color("999999")
 
 const max_popupmenu_height := 300
 
+enum AudioKeys {
+	ACTIVATED,
+	CHECK_BUTTON_OFF,
+	CHECK_BUTTON_ON,
+	KEYBOARD_TYPE,
+	MENU_ENTER,
+	MENU_IN,
+	MENU_OUT,
+	NAVIGATION,
+	SLIDE,
+	SLIDER_TICK,
+}
+
 enum Icons {
 	DOWNLOADING,
 	ERROR,
@@ -64,4 +77,14 @@ func open_app_config(tab: int = -1):
 	pass
 
 func show_warning(text: String):
+	pass
+
+func get_focused_window() -> Window:
+	return null
+
+func get_true_focused_control() -> Control:
+	return get_viewport().gui_get_focus_owner()
+
+func play_sound(key: AudioKeys, override : bool = true):
+	# TODO: Implement
 	pass
