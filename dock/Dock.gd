@@ -20,6 +20,7 @@ func get_theme_settings() -> Dictionary:
 
 func get_addon_settings() -> Dictionary:
 	var addon_settings = n_games.get_settings()
+	addon_settings.merge(n_config.get_addon_settings())
 	return addon_settings
 
 func load_settings(theme_settings: Dictionary, addon_settings: Dictionary):
@@ -27,5 +28,5 @@ func load_settings(theme_settings: Dictionary, addon_settings: Dictionary):
 	n_theme.file_popup = n_file_dialog
 	n_games.load_settings(addon_settings)
 	n_games.file_popup = n_file_dialog
-	n_config.load_settings(theme_settings)
+	n_config.load_settings(theme_settings, addon_settings)
 	n_config.file_popup = n_file_dialog

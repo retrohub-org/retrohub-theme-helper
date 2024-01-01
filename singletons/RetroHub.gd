@@ -26,9 +26,11 @@ var version_str := "%d.%d.%d%s" % [version_major, version_minor, version_patch, 
 
 @onready var GameRandomData = preload("res://addons/retrohub_theme_helper/utils/GameRandomData.gd").new()
 
+func _enter_tree():
+	_load_helper_config()
+
 func _ready():
 	emit_signal("app_initializing", true)
-	_load_helper_config()
 	_load_titles()
 
 func _notification(what):
