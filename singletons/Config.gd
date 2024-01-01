@@ -18,8 +18,12 @@ var _systems_raw : Dictionary
 var _theme_config : Dictionary
 
 func _ready():
-	if not Engine.is_editor_hint():
-		_load_systems()
+	if Engine.is_editor_hint(): return
+
+	_load_systems()
+	if RetroHub._helper_config.has("integration_rcheevos_enabled"):
+		config.integration_rcheevos_enabled = RetroHub._helper_config["integration_rcheevos_enabled"]
+	config_ready.emit(config)
 
 func _load_systems():
 	# Default systems

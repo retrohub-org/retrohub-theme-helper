@@ -31,6 +31,7 @@ var virtual_keyboard_show_on_mouse : bool = false
 var accessibility_screen_reader_enabled : bool = true
 var custom_gamemedia_dir : String = ""
 var ui_volume : int = 100
+var integration_rcheevos_enabled : bool = false
 
 const KEY_CONFIG_VERSION = "config_version"
 const KEY_IS_FIRST_TIME = "is_first_time"
@@ -62,6 +63,7 @@ const KEY_VIRTUAL_KEYBOARD_SHOW_ON_MOUSE = "virtual_keyboard_show_on_mouse"
 const KEY_ACCESSIBILITY_SCREEN_READER_ENABLED = "accessibility_screen_reader_enabled"
 const KEY_CUSTOM_GAMEMEDIA_DIR = "custom_gamemedia_dir"
 const KEY_UI_VOLUME = "ui_volume"
+const KEY_INTEGRATION_RCHEEVOS_ENABLED = "integration_rcheevos_enabled"
 
 static func default_system_names() -> Dictionary:
 	return {
