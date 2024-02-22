@@ -1,7 +1,7 @@
 extends Resource
 class_name ConfigData
 
-var config_version : int = 1
+var config_version : int = 2
 var is_first_time : bool = true
 var games_dir : String = FileUtils.get_home_dir() + "/ROMS"
 var current_theme : String = "default"
